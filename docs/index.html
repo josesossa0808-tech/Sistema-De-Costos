@@ -6,94 +6,100 @@
 <title>Sistema de Costos Estándar</title>
 <style>
   :root {
-    --fondo: #f3f5f8; --tarjeta: #ffffff; --texto: #1d2733; --suave: #5f6b7a;
-    --borde: #dde3ea; --primario: #1f5fae; --primario-txt: #ffffff; --sec: #e8edf3;
-    --lateral: #17202b; --lateral-txt: #c9d3df; --lateral-activo: #24364d; --lateral-fuerte: #ffffff;
-    --peligro: #c0392b; --fav: #1e8449; --desf: #c0392b;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --fondo: #10151b; --tarjeta: #19212b; --texto: #e6ebf1; --suave: #9aa6b5;
-      --borde: #2b3542; --primario: #4b8ee0; --primario-txt: #0b1016; --sec: #26303c;
-      --lateral: #0b1016; --lateral-txt: #aeb9c6; --lateral-activo: #1c2a3b; --lateral-fuerte: #ffffff;
-      --peligro: #e5675a; --fav: #4cc27f; --desf: #e5675a;
-    }
+    color-scheme: light;
+    --fondo: #f4f7fb; --tarjeta: #ffffff; --texto: #1d2733; --suave: #5f6b7a;
+    --borde: #dbe3ee; --primario: #1d5fbf; --primario-txt: #ffffff; --sec: #e8eef7;
+    --lateral: #1d5fbf; --lateral-txt: #dbe7fb; --lateral-activo: rgba(255,255,255,.2); --lateral-fuerte: #ffffff; --lateral-grupo: #a9c4ef;
+    --peligro: #c0392b; --fav: #1e8449; --desf: #c0392b; --aviso: #fff6dd; --aviso-borde: #efd48a;
   }
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: "Segoe UI", system-ui, Arial, sans-serif; background: var(--fondo); color: var(--texto); }
+  body { margin: 0; font-family: "Segoe UI", system-ui, Arial, sans-serif; background: var(--fondo); color: var(--texto); font-size: 15px; }
   button { background: var(--primario); color: var(--primario-txt); border: 0; padding: 9px 14px; border-radius: 6px; cursor: pointer; font: inherit; }
   button.sec { background: var(--sec); color: var(--texto); }
   button.peligro { background: var(--peligro); color: #fff; }
-  button.enlace { background: none; color: var(--primario); padding: 0; text-decoration: underline; }
-  input, select { padding: 9px; border: 1px solid var(--borde); border-radius: 6px; width: 100%; font: inherit; background: var(--tarjeta); color: var(--texto); }
-  label { display: block; font-size: 14px; margin-bottom: 10px; color: var(--suave); }
+  input, select { padding: 8px 9px; border: 1px solid var(--borde); border-radius: 6px; width: 100%; font: inherit; background: var(--tarjeta); color: var(--texto); }
+  input:disabled { opacity: .6; }
+  label { display: block; font-size: 13px; color: var(--suave); }
   label input, label select { margin-top: 4px; }
   .oculto { display: none !important; }
   .error { color: var(--peligro); min-height: 1.2em; margin: 6px 0 0; font-size: 14px; }
+  .ok { color: var(--fav); }
+  .aviso { background: var(--aviso); border: 1px solid var(--aviso-borde); border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; }
 
-  /* ===== Acceso (iniciar sesión / crear cuenta) ===== */
+  /* ===== Acceso ===== */
   #acceso { display: grid; place-items: center; min-height: 100vh; padding: 16px; }
-  .tarjeta { background: var(--tarjeta); padding: 30px; border-radius: 12px; width: 100%; max-width: 380px; box-shadow: 0 6px 24px rgba(0,0,0,.08); border: 1px solid var(--borde); }
+  .tarjeta { background: var(--tarjeta); padding: 30px; border-radius: 12px; width: 100%; max-width: 390px; box-shadow: 0 6px 24px rgba(0,0,0,.08); border: 1px solid var(--borde); }
   .tarjeta h1 { font-size: 21px; margin: 0 0 4px; }
   .tarjeta .sub { color: var(--suave); margin: 0 0 18px; }
+  .tarjeta label { margin-bottom: 10px; }
   .pestanas { display: grid; grid-template-columns: 1fr 1fr; background: var(--sec); border-radius: 8px; padding: 4px; margin-bottom: 18px; }
   .pestanas button { background: transparent; color: var(--suave); }
   .pestanas button.activa { background: var(--tarjeta); color: var(--texto); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
   .tarjeta form button[type=submit] { width: 100%; margin-top: 6px; }
-  .nota { font-size: 12px; color: var(--suave); margin-top: 16px; text-align: center; }
+  .nota { font-size: 12px; color: var(--suave); margin-top: 14px; text-align: center; }
 
   /* ===== Aplicación con barra lateral ===== */
-  #app { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
-  aside { background: var(--lateral); color: var(--lateral-txt); display: flex; flex-direction: column; padding: 18px 12px; position: sticky; top: 0; height: 100vh; }
-  .marca { color: var(--lateral-fuerte); font-weight: 700; font-size: 17px; padding: 0 10px 18px; border-bottom: 1px solid rgba(255,255,255,.08); margin-bottom: 12px; line-height: 1.3; }
+  #app { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+  aside { background: var(--lateral); color: var(--lateral-txt); display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; }
+  .marca { color: var(--lateral-fuerte); font-weight: 700; font-size: 17px; padding: 18px 20px 12px; line-height: 1.3; }
   .marca small { display: block; font-weight: 400; font-size: 12px; color: var(--lateral-txt); }
-  .menu { display: flex; flex-direction: column; gap: 2px; }
-  .menu button { background: transparent; color: var(--lateral-txt); text-align: left; padding: 10px 12px; display: flex; gap: 10px; align-items: center; border-radius: 8px; }
-  .menu button:hover { background: rgba(255,255,255,.05); }
-  .menu button.activo { background: var(--lateral-activo); color: var(--lateral-fuerte); }
-  .menu svg, .salir svg { width: 18px; height: 18px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-  .cuenta { margin-top: auto; border-top: 1px solid rgba(255,255,255,.08); padding: 14px 10px 0; font-size: 14px; }
+  .empresa-activa { padding: 0 14px 12px; border-bottom: 1px solid rgba(255,255,255,.2); }
+  .empresa-activa span { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--lateral-grupo); padding-left: 4px; }
+  .empresa-activa select { margin-top: 4px; background: rgba(255,255,255,.15); color: var(--lateral-fuerte); border-color: rgba(255,255,255,.35); }
+  .empresa-activa option { color: #1d2733; }
+  .menu { flex: 1; overflow-y: auto; padding: 8px 10px; }
+  .grupo { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--lateral-grupo); padding: 14px 10px 4px; }
+  .menu button { width: 100%; background: transparent; color: var(--lateral-txt); text-align: left; padding: 8px 12px; border-radius: 7px; font-size: 14px; }
+  .menu button:hover { background: rgba(255,255,255,.12); }
+  .menu button.activo { background: var(--lateral-activo); color: var(--lateral-fuerte); font-weight: 600; }
+  .cuenta { border-top: 1px solid rgba(255,255,255,.2); padding: 12px 20px 16px; font-size: 14px; }
   .cuenta b { color: var(--lateral-fuerte); display: block; }
-  .salir { background: transparent; color: var(--lateral-txt); padding: 8px 0; margin-top: 8px; display: flex; gap: 8px; align-items: center; }
+  .rol { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(255,255,255,.2); margin-top: 4px; }
+  .salir { background: transparent; color: var(--lateral-txt); padding: 8px 0 0; display: block; }
   .salir:hover { color: var(--lateral-fuerte); }
   .barra-movil { display: none; }
 
-  main { padding: 26px 28px; max-width: 1100px; width: 100%; }
+  main { padding: 26px 28px 60px; max-width: 1200px; width: 100%; }
   h2 { margin: 0 0 4px; }
+  h3 { margin: 22px 0 6px; font-size: 16px; }
   .desc { color: var(--suave); margin: 0 0 18px; }
-  .fila { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
-  .fila input, .fila select { width: auto; flex: 1 1 150px; }
-  .rejilla { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; align-items: start; }
-  fieldset { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 10px; }
-  legend { font-weight: 600; padding: 0 6px; }
-  .tabla { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; background: var(--tarjeta); margin-top: 12px; border: 1px solid var(--borde); border-radius: 10px; overflow: hidden; }
-  th, td { padding: 10px 12px; border-bottom: 1px solid var(--borde); text-align: left; }
+  .formulario { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 10px; padding: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; align-items: end; }
+  .formulario .acciones { display: flex; gap: 8px; }
+  .tabla { overflow-x: auto; margin-top: 14px; }
+  table { width: 100%; border-collapse: collapse; background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 10px; overflow: hidden; }
+  th, td { padding: 9px 12px; border-bottom: 1px solid var(--borde); text-align: left; white-space: nowrap; }
   tr:last-child td { border-bottom: 0; }
-  th { font-size: 13px; color: var(--suave); font-weight: 600; }
-  td.num { text-align: right; font-variant-numeric: tabular-nums; }
-  td button { padding: 5px 10px; font-size: 13px; }
-  tr.fav td.tipo { color: var(--fav); font-weight: 600; }
-  tr.desf td.tipo { color: var(--desf); font-weight: 600; }
-  .resumen { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 10px; padding: 12px 14px; margin-top: 14px; }
-  .cifras { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 18px; }
-  .cifra { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 10px; padding: 16px; }
+  th { font-size: 12px; color: var(--suave); font-weight: 600; text-transform: uppercase; letter-spacing: .03em; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  td.acc { text-align: right; }
+  td button { padding: 4px 10px; font-size: 13px; }
+  tr.total td { font-weight: 700; background: var(--sec); }
+  .fav { color: var(--fav); font-weight: 600; }
+  .desf { color: var(--desf); font-weight: 600; }
+  .vacio { color: var(--suave); }
+  .cifras { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin-bottom: 18px; }
+  .cifra { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 10px; padding: 14px 16px; }
   .cifra span { color: var(--suave); font-size: 13px; }
-  .cifra b { display: block; font-size: 26px; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .cifra b { display: block; font-size: 24px; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .pasos { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 10px; padding: 6px 18px; }
+  .pasos li { padding: 6px 0; }
+  .pasos li.hecho { color: var(--suave); text-decoration: line-through; }
+  .filtros { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+  .filtros label { min-width: 220px; }
 
-  @media (max-width: 760px) {
+  @media (max-width: 800px) {
     #app { grid-template-columns: 1fr; }
     .barra-movil { display: flex; align-items: center; gap: 12px; background: var(--lateral); color: var(--lateral-fuerte); padding: 12px 16px; position: sticky; top: 0; z-index: 5; }
-    .barra-movil button { background: transparent; color: inherit; padding: 4px 8px; font-size: 22px; line-height: 1; }
-    aside { position: fixed; inset: 0 auto 0 0; width: 250px; z-index: 10; transform: translateX(-100%); transition: transform .2s; }
-    aside.abierto { transform: none; box-shadow: 0 0 0 100vmax rgba(0,0,0,.4); }
-    main { padding: 18px 16px; }
+    .barra-movil button { background: transparent; color: inherit; padding: 2px 8px; font-size: 22px; line-height: 1; }
+    aside { position: fixed; inset: 0 auto 0 0; width: 270px; z-index: 10; transform: translateX(-100%); transition: transform .2s; }
+    aside.abierto { transform: none; box-shadow: 0 0 0 100vmax rgba(0,0,0,.45); }
+    main { padding: 18px 16px 60px; }
   }
 </style>
 </head>
 <body>
 
-<!-- ================= Acceso: iniciar sesión o crear cuenta ================= -->
+<!-- ================= Acceso ================= -->
 <section id="acceso">
   <div class="tarjeta">
     <h1>Sistema de Costos Estándar</h1>
@@ -102,14 +108,12 @@
       <button type="button" id="tabEntrar" class="activa">Iniciar sesión</button>
       <button type="button" id="tabCrear">Crear cuenta</button>
     </div>
-
     <form id="formEntrar">
       <label>Usuario <input name="usuario" required autocomplete="username"></label>
       <label>Contraseña <input name="password" type="password" required autocomplete="current-password"></label>
       <button type="submit">Entrar</button>
       <p class="error" id="errEntrar"></p>
     </form>
-
     <form id="formCrear" class="oculto">
       <label>Nombre completo <input name="nombre" required autocomplete="name"></label>
       <label>Usuario <input name="usuario" required autocomplete="username" minlength="3"></label>
@@ -118,307 +122,591 @@
       <button type="submit">Crear mi cuenta</button>
       <p class="error" id="errCrear"></p>
     </form>
-    <p class="nota">Las cuentas y la información se guardan en este navegador.</p>
+    <p class="nota" id="notaAcceso"></p>
   </div>
 </section>
 
 <!-- ================= Aplicación ================= -->
 <div id="app" class="oculto">
   <div class="barra-movil"><button id="btnMenu" aria-label="Abrir menú">☰</button><strong>Sistema de Costos</strong></div>
-
   <aside id="lateral">
     <div class="marca">Sistema de Costos<small>Costeo estándar</small></div>
-    <nav class="menu" id="menu">
-      <button data-v="inicio"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Inicio</button>
-      <button data-v="empresas"><svg viewBox="0 0 24 24"><path d="M4 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16M15 9h4a1 1 0 0 1 1 1v11M3 21h18M8 8h3M8 12h3M8 16h3"/></svg>Empresas</button>
-      <button data-v="variaciones"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Análisis de variaciones</button>
-      <button data-v="bitacora"><svg viewBox="0 0 24 24"><path d="M12 7v5l3 2M21 12a9 9 0 1 1-9-9 9 9 0 0 1 9 9z"/></svg>Registro de actividades</button>
-      <button data-v="cuenta"><svg viewBox="0 0 24 24"><path d="M20 21a8 8 0 0 0-16 0M12 13a4 4 0 1 0-4-4 4 4 0 0 0 4 4z"/></svg>Mi cuenta</button>
-    </nav>
+    <div class="empresa-activa"><span>Empresa activa</span><select id="selEmpresa"></select></div>
+    <nav class="menu" id="menu"></nav>
     <div class="cuenta">
-      <b id="lblNombre"></b><span id="lblUsuario"></span>
-      <button class="salir" id="btnSalir"><svg viewBox="0 0 24 24"><path d="M15 17l5-5-5-5M20 12H9M12 21H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h7"/></svg>Cerrar sesión</button>
+      <b id="lblNombre"></b><span class="rol" id="lblRol"></span>
+      <button class="salir" id="btnSalir">Cerrar sesión →</button>
     </div>
   </aside>
-
-  <main>
-    <!-- Inicio -->
-    <section id="v-inicio" class="vista">
-      <h2 id="saludo">Bienvenido</h2>
-      <p class="desc">Resumen de su información.</p>
-      <div class="cifras">
-        <div class="cifra"><span>Empresas registradas</span><b id="nEmpresas">0</b></div>
-        <div class="cifra"><span>Análisis de variaciones</span><b id="nAnalisis">0</b></div>
-        <div class="cifra"><span>Actividades registradas</span><b id="nActividades">0</b></div>
-      </div>
-      <p class="desc">Use la barra lateral para ir a cada módulo.</p>
-    </section>
-
-    <!-- Empresas -->
-    <section id="v-empresas" class="vista oculto">
-      <h2>Empresas</h2>
-      <p class="desc">Crear, editar y eliminar empresas con sus datos tributarios.</p>
-      <form id="formEmpresa" class="fila">
-        <input type="hidden" name="id">
-        <input name="nit" placeholder="NIT" required>
-        <input name="razon_social" placeholder="Razón social" required>
-        <select name="regimen_tributario">
-          <option value="">Régimen tributario</option>
-          <option>Responsable de IVA</option>
-          <option>No responsable de IVA</option>
-          <option>Régimen Simple de Tributación</option>
-          <option>Gran contribuyente</option>
-        </select>
-        <input name="direccion" placeholder="Dirección">
-        <input name="telefono" placeholder="Teléfono">
-        <button>Guardar</button>
-        <button type="button" class="sec oculto" id="btnCancelarEmpresa">Cancelar</button>
-      </form>
-      <div class="tabla"><table>
-        <thead><tr><th>NIT</th><th>Razón social</th><th>Régimen</th><th>Teléfono</th><th></th></tr></thead>
-        <tbody id="tablaEmpresas"></tbody>
-      </table></div>
-    </section>
-
-    <!-- Variaciones -->
-    <section id="v-variaciones" class="vista oculto">
-      <h2>Análisis de variaciones</h2>
-      <p class="desc">Variaciones de materiales, mano de obra y CIF. Positivo = desfavorable, negativo = favorable.</p>
-      <form id="formVar" class="rejilla">
-        <fieldset><legend>Materiales</legend>
-          <label>Precio estándar <input name="precio_std" type="number" step="any" required></label>
-          <label>Precio real <input name="precio_real" type="number" step="any" required></label>
-          <label>Cantidad estándar permitida <input name="cantidad_std_permitida" type="number" step="any" required></label>
-          <label>Cantidad real <input name="cantidad_real" type="number" step="any" required></label>
-        </fieldset>
-        <fieldset><legend>Mano de obra directa</legend>
-          <label>Tarifa estándar por hora <input name="tarifa_std" type="number" step="any" required></label>
-          <label>Tarifa real por hora <input name="tarifa_real" type="number" step="any" required></label>
-          <label>Horas estándar permitidas <input name="horas_std_permitidas" type="number" step="any" required></label>
-          <label>Horas reales <input name="horas_reales" type="number" step="any" required></label>
-        </fieldset>
-        <fieldset><legend>Costos indirectos (CIF)</legend>
-          <label>CIF fijo presupuestado <input name="cif_fijo_presup" type="number" step="any" required></label>
-          <label>CIF variable presupuestado <input name="cif_variable_presup" type="number" step="any" required></label>
-          <label>Capacidad normal (base) <input name="capacidad_normal" type="number" step="any" required></label>
-          <label>Base estándar permitida <input name="base_std_permitida" type="number" step="any" required></label>
-          <label>CIF real <input name="cif_real" type="number" step="any" required></label>
-        </fieldset>
-        <div><button>Calcular</button> <button type="button" class="sec" id="btnEjemplo">Cargar ejemplo</button></div>
-      </form>
-      <div id="resultadoVar"></div>
-    </section>
-
-    <!-- Bitácora -->
-    <section id="v-bitacora" class="vista oculto">
-      <h2>Registro de actividades</h2>
-      <p class="desc">Acciones importantes realizadas con su cuenta.</p>
-      <div class="tabla"><table>
-        <thead><tr><th>Fecha</th><th>Acción</th><th>Detalle</th></tr></thead>
-        <tbody id="tablaBitacora"></tbody>
-      </table></div>
-    </section>
-
-    <!-- Mi cuenta -->
-    <section id="v-cuenta" class="vista oculto">
-      <h2>Mi cuenta</h2>
-      <p class="desc">Datos de su usuario.</p>
-      <form id="formCuenta" class="rejilla" style="max-width:640px">
-        <fieldset><legend>Datos</legend>
-          <label>Nombre completo <input name="nombre" required></label>
-          <label>Usuario <input name="usuario" disabled></label>
-        </fieldset>
-        <fieldset><legend>Cambiar contraseña</legend>
-          <label>Contraseña actual <input name="actual" type="password"></label>
-          <label>Nueva contraseña <input name="nueva" type="password" minlength="4"></label>
-        </fieldset>
-        <div><button>Guardar cambios</button><p class="error" id="errCuenta"></p></div>
-      </form>
-    </section>
-  </main>
+  <main id="vista"></main>
 </div>
 
 <script>
-// ================= Almacenamiento (en el navegador) =================
-const CLAVE = 'sistema-costos-v2';
+// =====================================================================
+//  ALMACENAMIENTO (se guarda en el navegador)
+// =====================================================================
+const CLAVE = 'sistema-costos-v3';
 let memoria = null;
 function leer() { try { const t = localStorage.getItem(CLAVE); if (t) return JSON.parse(t); } catch (e) {} return memoria; }
 function escribir(d) { memoria = d; try { localStorage.setItem(CLAVE, JSON.stringify(d)); } catch (e) {} }
 function hash(t) { let h = 5381; for (const c of 'costos::' + t) h = ((h << 5) + h + c.charCodeAt(0)) >>> 0; return h.toString(16); }
 
-let DB = leer() || { sigId: 1, usuarios: [], datos: {} };
+const TABLAS = ['empresas', 'periodos', 'unidades', 'centros', 'productos', 'materiales', 'estMP', 'cargos',
+  'trabajadores', 'estMOD', 'cifPres', 'cifReal', 'ordenes', 'consumos'];
+let DB = leer() || { sigId: 1, usuarios: [], bitacora: [], empresaActiva: {}, t: {} };
+TABLAS.forEach(t => DB.t[t] ||= []);
+const T = DB.t;
 const guardar = () => escribir(DB);
 const nuevoId = () => DB.sigId++;
 
-let sesion = null;   // usuario que entró
-let MIS = null;      // datos de ese usuario
-try { const id = Number(sessionStorage.getItem('sesion-costos')); if (id) sesion = DB.usuarios.find(u => u.id === id) || null; } catch (e) {}
+let sesion = null;
+try { const id = Number(sessionStorage.getItem('sesion-costos')); if (id) sesion = DB.usuarios.find(u => u.id === id && u.activo) || null; } catch (e) {}
 
-function datosDe(u) { DB.datos[u.id] ||= { empresas: [], bitacora: [], analisis: 0 }; return DB.datos[u.id]; }
 function registrar(accion, detalle = '') {
-  if (!MIS) return;
-  MIS.bitacora.unshift({ fecha: new Date().toLocaleString('es-CO'), accion, detalle });
-  MIS.bitacora = MIS.bitacora.slice(0, 300); guardar();
+  DB.bitacora.unshift({ fecha: new Date().toLocaleString('es-CO'), usuario: sesion ? sesion.usuario : '', accion, detalle: String(detalle) });
+  DB.bitacora = DB.bitacora.slice(0, 500); guardar();
 }
 
-// ================= Utilidades =================
+// =====================================================================
+//  UTILIDADES
+// =====================================================================
 const $ = (s) => document.querySelector(s);
 const esc = (t) => String(t ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const pesos = (v) => Number(v).toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 2 });
+const pesos = (v) => Number(v || 0).toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 2 });
+const num = (v, d = 2) => Number(v || 0).toLocaleString('es-CO', { maximumFractionDigits: d });
+const n = (v) => Number(v) || 0;
+const tipo = (v) => Math.abs(v) < 0.005 ? 'Sin variación' : v < 0 ? 'Favorable' : 'Desfavorable';
+const claseTipo = (v) => Math.abs(v) < 0.005 ? '' : v < 0 ? 'fav' : 'desf';
+const empresaId = () => sesion && DB.empresaActiva[sesion.id];
+const filas = (t) => E[t] && E[t].global ? T[t] : T[t].filter(r => r.empresa_id === empresaId());
+const buscar = (t, id) => T[t].find(r => r.id === Number(id));
+const nombre = (t, id, campo = 'nombre') => { const r = buscar(t, id); return r ? r[campo] : '—'; };
 
-// ================= Acceso =================
+// Permisos por rol
+const esAdmin = () => sesion && sesion.rol === 'Administrador';
+const puedeEditar = () => sesion && sesion.rol !== 'Estudiante';
+const puedeEliminar = () => esAdmin();
+
+// =====================================================================
+//  DEFINICIÓN DE MÓDULOS (formularios y tablas)
+// =====================================================================
+const opts = (t, etq) => () => filas(t).map(r => [r.id, etq(r)]);
+const BASES = ['Horas MOD', 'Horas máquina', 'Unidades producidas'];
+const E = {
+  empresas: { global: true, titulo: 'Empresas', desc: 'Crear, editar y eliminar empresas con sus datos tributarios.', unico: 'nit',
+    campos: [
+      { n: 'nit', l: 'NIT', req: 1 }, { n: 'razon_social', l: 'Razón social', req: 1 },
+      { n: 'regimen', l: 'Régimen tributario', t: 'select', o: ['Responsable de IVA', 'No responsable de IVA', 'Régimen Simple de Tributación', 'Gran contribuyente'] },
+      { n: 'ciiu', l: 'Actividad económica (CIIU)' }, { n: 'retenedor', l: 'Agente retenedor', t: 'select', o: ['No', 'Sí'] },
+      { n: 'ciudad', l: 'Ciudad' }, { n: 'direccion', l: 'Dirección' }, { n: 'telefono', l: 'Teléfono' }],
+    cols: [['NIT', r => esc(r.nit)], ['Razón social', r => esc(r.razon_social)], ['Régimen', r => esc(r.regimen)],
+      ['CIIU', r => esc(r.ciiu)], ['Retenedor', r => esc(r.retenedor)], ['Ciudad', r => esc(r.ciudad)]] },
+
+  periodos: { titulo: 'Periodos contables', desc: 'Periodos en los que se registra la producción y los CIF.',
+    campos: [{ n: 'nombre', l: 'Nombre (ej. Enero 2026)', req: 1 }, { n: 'inicio', l: 'Fecha inicio', t: 'date', req: 1 },
+      { n: 'fin', l: 'Fecha fin', t: 'date', req: 1 }, { n: 'estado', l: 'Estado', t: 'select', o: ['Abierto', 'Cerrado'] }],
+    cols: [['Periodo', r => esc(r.nombre)], ['Inicio', r => esc(r.inicio)], ['Fin', r => esc(r.fin)], ['Estado', r => esc(r.estado)]] },
+
+  unidades: { titulo: 'Unidades de medida', desc: 'Unidades usadas para materiales y productos.', unico: 'codigo',
+    campos: [{ n: 'codigo', l: 'Código (ej. KG)', req: 1 }, { n: 'nombre', l: 'Nombre', req: 1 }],
+    cols: [['Código', r => esc(r.codigo)], ['Nombre', r => esc(r.nombre)]] },
+
+  centros: { titulo: 'Centros de costos', desc: 'Áreas a las que se asignan los costos.', unico: 'codigo',
+    campos: [{ n: 'codigo', l: 'Código', req: 1 }, { n: 'nombre', l: 'Nombre', req: 1 },
+      { n: 'tipo', l: 'Tipo', t: 'select', o: ['Producción', 'Servicio', 'Administración'] }],
+    cols: [['Código', r => esc(r.codigo)], ['Nombre', r => esc(r.nombre)], ['Tipo', r => esc(r.tipo)]] },
+
+  productos: { titulo: 'Productos', desc: 'Productos que fabrica la empresa.', unico: 'codigo',
+    campos: [{ n: 'codigo', l: 'Código', req: 1 }, { n: 'nombre', l: 'Nombre', req: 1 },
+      { n: 'unidad_id', l: 'Unidad de medida', t: 'select', ref: 1, o: opts('unidades', r => `${r.codigo} - ${r.nombre}`) }],
+    cols: [['Código', r => esc(r.codigo)], ['Producto', r => esc(r.nombre)], ['Unidad', r => esc(nombre('unidades', r.unidad_id, 'codigo'))],
+      ['Costo estándar unitario', r => pesos(costoEstandarUnitario(r.id).total), 1]] },
+
+  materiales: { titulo: 'Registro de materiales', desc: 'Materias primas directas con su precio estándar y proveedor.', unico: 'codigo',
+    campos: [{ n: 'codigo', l: 'Código del material', req: 1 }, { n: 'descripcion', l: 'Descripción', req: 1 },
+      { n: 'unidad_id', l: 'Unidad de medida', t: 'select', ref: 1, o: opts('unidades', r => `${r.codigo} - ${r.nombre}`) },
+      { n: 'precio_std', l: 'Precio estándar', t: 'number', req: 1 }, { n: 'proveedor', l: 'Proveedor' },
+      { n: 'centro_id', l: 'Centro de costos', t: 'select', ref: 1, o: opts('centros', r => `${r.codigo} - ${r.nombre}`) }],
+    cols: [['Código', r => esc(r.codigo)], ['Descripción', r => esc(r.descripcion)], ['Unidad', r => esc(nombre('unidades', r.unidad_id, 'codigo'))],
+      ['Precio estándar', r => pesos(r.precio_std), 1], ['Proveedor', r => esc(r.proveedor)], ['Centro de costos', r => esc(nombre('centros', r.centro_id))]] },
+
+  estMP: { titulo: 'Cantidades estándar de materiales', desc: 'Cuánto material se necesita, en estándar, para fabricar una unidad de cada producto.',
+    campos: [{ n: 'producto_id', l: 'Producto', t: 'select', ref: 1, req: 1, o: opts('productos', r => `${r.codigo} - ${r.nombre}`) },
+      { n: 'material_id', l: 'Material', t: 'select', ref: 1, req: 1, o: opts('materiales', r => `${r.codigo} - ${r.descripcion}`) },
+      { n: 'cantidad', l: 'Cantidad estándar por unidad', t: 'number', req: 1 }],
+    cols: [['Producto', r => esc(nombre('productos', r.producto_id))], ['Material', r => esc(nombre('materiales', r.material_id, 'descripcion'))],
+      ['Cantidad estándar', r => num(r.cantidad, 4), 1], ['Precio estándar', r => pesos(nombre('materiales', r.material_id, 'precio_std')), 1],
+      ['Costo estándar', r => pesos(n(r.cantidad) * n(nombre('materiales', r.material_id, 'precio_std'))), 1]] },
+
+  cargos: { titulo: 'Cargos', desc: 'Cargos de los trabajadores de producción.',
+    campos: [{ n: 'nombre', l: 'Cargo', req: 1 }, { n: 'descripcion', l: 'Descripción' }],
+    cols: [['Cargo', r => esc(r.nombre)], ['Descripción', r => esc(r.descripcion)],
+      ['Trabajadores', r => filas('trabajadores').filter(t => t.cargo_id === r.id).length, 1]] },
+
+  trabajadores: { titulo: 'Trabajadores', desc: 'Salarios, prestaciones y cargas laborales. La tarifa por hora se calcula sola.', unico: 'documento',
+    campos: [{ n: 'documento', l: 'Documento', req: 1 }, { n: 'nombre', l: 'Nombre', req: 1 },
+      { n: 'cargo_id', l: 'Cargo', t: 'select', ref: 1, o: opts('cargos', r => r.nombre) },
+      { n: 'salario', l: 'Salario mensual', t: 'number', req: 1 },
+      { n: 'prestaciones', l: '% prestaciones y cargas', t: 'number', def: 52.18 },
+      { n: 'horas_mes', l: 'Horas laborales al mes', t: 'number', def: 230 }],
+    cols: [['Documento', r => esc(r.documento)], ['Nombre', r => esc(r.nombre)], ['Cargo', r => esc(nombre('cargos', r.cargo_id))],
+      ['Salario', r => pesos(r.salario), 1], ['Prestaciones', r => pesos(n(r.salario) * n(r.prestaciones) / 100), 1],
+      ['Costo mensual', r => pesos(costoMensual(r)), 1], ['Tarifa por hora', r => pesos(tarifaHora(r)), 1]] },
+
+  estMOD: { titulo: 'Estándar de mano de obra', desc: 'Horas estándar y tarifa estándar por hora para cada unidad de producto.',
+    arriba: () => { const ts = filas('trabajadores'); if (!ts.length) return '';
+      const prom = ts.reduce((s, t) => s + tarifaHora(t), 0) / ts.length;
+      return `<div class="aviso">Tarifa promedio por hora de sus trabajadores: <b>${pesos(prom)}</b>. Puede usarla como tarifa estándar.</div>`; },
+    campos: [{ n: 'producto_id', l: 'Producto', t: 'select', ref: 1, req: 1, o: opts('productos', r => `${r.codigo} - ${r.nombre}`) },
+      { n: 'horas', l: 'Horas estándar MOD por unidad', t: 'number', req: 1 },
+      { n: 'tarifa', l: 'Tarifa estándar por hora', t: 'number', req: 1 },
+      { n: 'horas_maq', l: 'Horas máquina estándar por unidad', t: 'number', def: 0 }],
+    cols: [['Producto', r => esc(nombre('productos', r.producto_id))], ['Horas estándar', r => num(r.horas, 4), 1],
+      ['Tarifa estándar', r => pesos(r.tarifa), 1], ['Costo estándar MOD', r => pesos(n(r.horas) * n(r.tarifa)), 1],
+      ['Horas máquina', r => num(r.horas_maq, 4), 1]] },
+
+  cifPres: { titulo: 'CIF presupuestado', desc: 'CIF fijos y variables por periodo, base de aplicación y tasa predeterminada.',
+    campos: [{ n: 'periodo_id', l: 'Periodo', t: 'select', ref: 1, req: 1, o: opts('periodos', r => r.nombre) },
+      { n: 'fijo', l: 'CIF fijo presupuestado', t: 'number', req: 1 },
+      { n: 'variable', l: 'CIF variable presupuestado', t: 'number', req: 1 },
+      { n: 'base', l: 'Base de aplicación', t: 'select', o: BASES },
+      { n: 'capacidad', l: 'Capacidad normal (en la base)', t: 'number', req: 1 }],
+    cols: [['Periodo', r => esc(nombre('periodos', r.periodo_id))], ['CIF fijo', r => pesos(r.fijo), 1], ['CIF variable', r => pesos(r.variable), 1],
+      ['CIF presupuestado', r => pesos(n(r.fijo) + n(r.variable)), 1], ['Base', r => esc(r.base)], ['Capacidad', r => num(r.capacidad), 1],
+      ['Tasa predeterminada', r => pesos(tasas(r).total), 1]] },
+
+  cifReal: { titulo: 'CIF real', desc: 'Costos indirectos realmente causados en cada periodo.',
+    campos: [{ n: 'periodo_id', l: 'Periodo', t: 'select', ref: 1, req: 1, o: opts('periodos', r => r.nombre) },
+      { n: 'concepto', l: 'Concepto (ej. energía, arriendo)', req: 1 },
+      { n: 'tipo', l: 'Tipo', t: 'select', o: ['Variable', 'Fijo'] },
+      { n: 'valor', l: 'Valor', t: 'number', req: 1 },
+      { n: 'centro_id', l: 'Centro de costos', t: 'select', ref: 1, o: opts('centros', r => `${r.codigo} - ${r.nombre}`) }],
+    cols: [['Periodo', r => esc(nombre('periodos', r.periodo_id))], ['Concepto', r => esc(r.concepto)], ['Tipo', r => esc(r.tipo)],
+      ['Valor', r => pesos(r.valor), 1], ['Centro de costos', r => esc(nombre('centros', r.centro_id))]] },
+
+  ordenes: { titulo: 'Órdenes de producción', desc: 'Producto, cantidad, fecha, horas de trabajo y estado de cada orden.', unico: 'numero',
+    arriba: () => { const os = filas('ordenes'), ter = os.filter(o => o.estado === 'Terminada'), pro = os.filter(o => o.estado !== 'Terminada');
+      const val = (l) => l.reduce((s, o) => s + calcularOrden(o).real.total, 0);
+      return `<div class="cifras">
+        <div class="cifra"><span>Producción terminada</span><b>${ter.length} órdenes</b><span>${num(ter.reduce((s, o) => s + n(o.cantidad), 0))} unidades · ${pesos(val(ter))}</span></div>
+        <div class="cifra"><span>Producción en proceso</span><b>${pro.length} órdenes</b><span>${num(pro.reduce((s, o) => s + n(o.cantidad), 0))} unidades · ${pesos(val(pro))}</span></div></div>`; },
+    campos: [{ n: 'numero', l: 'N.º de orden', req: 1 },
+      { n: 'producto_id', l: 'Producto', t: 'select', ref: 1, req: 1, o: opts('productos', r => `${r.codigo} - ${r.nombre}`) },
+      { n: 'periodo_id', l: 'Periodo', t: 'select', ref: 1, req: 1, o: opts('periodos', r => r.nombre) },
+      { n: 'fecha', l: 'Fecha', t: 'date', req: 1 },
+      { n: 'cantidad', l: 'Cantidad producida', t: 'number', req: 1 },
+      { n: 'horas_reales', l: 'Horas reales de MOD', t: 'number', req: 1 },
+      { n: 'tarifa_real', l: 'Tarifa real por hora', t: 'number', req: 1 },
+      { n: 'horas_maq_reales', l: 'Horas máquina reales', t: 'number', def: 0 },
+      { n: 'estado', l: 'Estado', t: 'select', o: ['En proceso', 'Terminada'] }],
+    cols: [['Orden', r => esc(r.numero)], ['Producto', r => esc(nombre('productos', r.producto_id))], ['Periodo', r => esc(nombre('periodos', r.periodo_id))],
+      ['Fecha', r => esc(r.fecha)], ['Cantidad', r => num(r.cantidad), 1], ['Horas reales', r => num(r.horas_reales), 1],
+      ['CIF aplicado', r => pesos(calcularOrden(r).std.cif), 1], ['Estado', r => esc(r.estado)]] },
+
+  consumos: { titulo: 'Materia prima utilizada', desc: 'Material realmente consumido en cada orden, con su cantidad y precio real.',
+    campos: [{ n: 'orden_id', l: 'Orden de producción', t: 'select', ref: 1, req: 1, o: opts('ordenes', r => `${r.numero} - ${nombre('productos', r.producto_id)}`) },
+      { n: 'material_id', l: 'Material', t: 'select', ref: 1, req: 1, o: opts('materiales', r => `${r.codigo} - ${r.descripcion}`) },
+      { n: 'cantidad', l: 'Cantidad real', t: 'number', req: 1 },
+      { n: 'precio', l: 'Precio real unitario', t: 'number', req: 1 }],
+    cols: [['Orden', r => esc(nombre('ordenes', r.orden_id, 'numero'))], ['Material', r => esc(nombre('materiales', r.material_id, 'descripcion'))],
+      ['Cantidad real', r => num(r.cantidad, 4), 1], ['Precio real', r => pesos(r.precio), 1], ['Costo real', r => pesos(n(r.cantidad) * n(r.precio)), 1]] },
+};
+
+// =====================================================================
+//  CÁLCULOS DE COSTO ESTÁNDAR
+// =====================================================================
+const costoMensual = (t) => n(t.salario) * (1 + n(t.prestaciones) / 100);
+const tarifaHora = (t) => n(t.horas_mes) ? costoMensual(t) / n(t.horas_mes) : 0;
+function tasas(p) {
+  const cap = n(p.capacidad);
+  return { variable: cap ? n(p.variable) / cap : 0, fija: cap ? n(p.fijo) / cap : 0, total: cap ? (n(p.fijo) + n(p.variable)) / cap : 0 };
+}
+const presupuestoDe = (periodoId) => filas('cifPres').find(p => p.periodo_id === periodoId);
+const estandarMOD = (prodId) => filas('estMOD').find(e => e.producto_id === prodId) || { horas: 0, tarifa: 0, horas_maq: 0 };
+
+function costoEstandarUnitario(prodId) {
+  const mp = filas('estMP').filter(e => e.producto_id === prodId).reduce((s, e) => s + n(e.cantidad) * n(nombre('materiales', e.material_id, 'precio_std')), 0);
+  const m = estandarMOD(prodId), mod = n(m.horas) * n(m.tarifa);
+  // CIF unitario con el presupuesto más reciente
+  const pres = filas('cifPres').slice(-1)[0];
+  let cif = 0;
+  if (pres) { const base = pres.base === 'Horas máquina' ? n(m.horas_maq) : pres.base === 'Unidades producidas' ? 1 : n(m.horas); cif = tasas(pres).total * base; }
+  return { mp, mod, cif, total: mp + mod + cif };
+}
+
+function baseDeOrden(o, base) {
+  const m = estandarMOD(o.producto_id), q = n(o.cantidad);
+  if (base === 'Horas máquina') return { std: n(m.horas_maq) * q, real: n(o.horas_maq_reales) };
+  if (base === 'Unidades producidas') return { std: q, real: q };
+  return { std: n(m.horas) * q, real: n(o.horas_reales) };
+}
+
+function calcularOrden(o) {
+  const q = n(o.cantidad);
+  // --- Materiales ---
+  const est = filas('estMP').filter(e => e.producto_id === o.producto_id);
+  const cons = filas('consumos').filter(c => c.orden_id === o.id);
+  const ids = [...new Set([...est.map(e => e.material_id), ...cons.map(c => c.material_id)])];
+  const materiales = ids.map(id => {
+    const PE = n(nombre('materiales', id, 'precio_std'));
+    const CE = est.filter(e => e.material_id === id).reduce((s, e) => s + n(e.cantidad), 0) * q;
+    const usados = cons.filter(c => c.material_id === id);
+    const CR = usados.reduce((s, c) => s + n(c.cantidad), 0);
+    const costoReal = usados.reduce((s, c) => s + n(c.cantidad) * n(c.precio), 0);
+    const PR = CR ? costoReal / CR : 0;
+    return { id, nombre: nombre('materiales', id, 'descripcion'), PE, CE, PR, CR, std: CE * PE, real: costoReal,
+      varPrecio: costoReal - PE * CR, varCantidad: (CR - CE) * PE };
+  });
+  // --- Mano de obra ---
+  const m = estandarMOD(o.producto_id);
+  const HE = n(m.horas) * q, TE = n(m.tarifa), HR = n(o.horas_reales), TR = n(o.tarifa_real);
+  // --- CIF ---
+  const pres = presupuestoDe(o.periodo_id);
+  let cifStd = 0, cifReal = 0, baseStd = 0, baseReal = 0;
+  if (pres) {
+    const b = baseDeOrden(o, pres.base); baseStd = b.std; baseReal = b.real;
+    cifStd = tasas(pres).total * baseStd;
+    const realPeriodo = filas('cifReal').filter(c => c.periodo_id === o.periodo_id).reduce((s, c) => s + n(c.valor), 0);
+    const totalBaseReal = filas('ordenes').filter(x => x.periodo_id === o.periodo_id).reduce((s, x) => s + baseDeOrden(x, pres.base).real, 0);
+    cifReal = totalBaseReal ? realPeriodo * baseReal / totalBaseReal : 0;
+  }
+  const std = { mp: materiales.reduce((s, x) => s + x.std, 0), mod: HE * TE, cif: cifStd };
+  const real = { mp: materiales.reduce((s, x) => s + x.real, 0), mod: HR * TR, cif: cifReal };
+  std.total = std.mp + std.mod + std.cif; real.total = real.mp + real.mod + real.cif;
+  return { q, materiales, HE, TE, HR, TR, pres, baseStd, baseReal, std, real,
+    varTarifa: (TR - TE) * HR, varEficiencia: (HR - HE) * TE };
+}
+
+function analisisPeriodo(periodoId) {
+  const ords = filas('ordenes').filter(o => o.periodo_id === periodoId).map(o => ({ o, c: calcularOrden(o) }));
+  const suma = (f) => ords.reduce((s, x) => s + f(x.c), 0);
+  const pres = presupuestoDe(periodoId);
+  const r = {
+    ords, pres,
+    varPrecioMP: suma(c => c.materiales.reduce((s, m) => s + m.varPrecio, 0)),
+    varCantidadMP: suma(c => c.materiales.reduce((s, m) => s + m.varCantidad, 0)),
+    varTarifa: suma(c => c.varTarifa), varEficiencia: suma(c => c.varEficiencia),
+    cifReal: filas('cifReal').filter(c => c.periodo_id === periodoId).reduce((s, c) => s + n(c.valor), 0),
+    varPresupuestoCIF: 0, varVolumenCIF: 0, cifAplicado: 0, presFlexible: 0, baseStd: 0,
+  };
+  if (pres) {
+    const t = tasas(pres);
+    r.baseStd = suma(c => c.baseStd);
+    r.cifAplicado = t.total * r.baseStd;
+    r.presFlexible = n(pres.fijo) + t.variable * r.baseStd;
+    r.varPresupuestoCIF = r.cifReal - r.presFlexible;
+    r.varVolumenCIF = r.presFlexible - r.cifAplicado;
+  }
+  r.total = r.varPrecioMP + r.varCantidadMP + r.varTarifa + r.varEficiencia + r.varPresupuestoCIF + r.varVolumenCIF;
+  return r;
+}
+
+// =====================================================================
+//  ACCESO: crear cuenta / iniciar sesión / cerrar sesión
+// =====================================================================
 function pestana(crear) {
   $('#tabCrear').classList.toggle('activa', crear); $('#tabEntrar').classList.toggle('activa', !crear);
   $('#formCrear').classList.toggle('oculto', !crear); $('#formEntrar').classList.toggle('oculto', crear);
   $('#errEntrar').textContent = $('#errCrear').textContent = '';
+  $('#notaAcceso').textContent = DB.usuarios.length ? 'Las cuentas nuevas quedan con rol Usuario. El administrador puede cambiar los roles.'
+    : 'La primera cuenta que se cree será el Administrador del sistema.';
 }
 $('#tabEntrar').onclick = () => pestana(false);
 $('#tabCrear').onclick = () => pestana(true);
 
 $('#formCrear').onsubmit = (e) => {
   e.preventDefault();
-  const d = Object.fromEntries(new FormData(e.target)); const usuario = d.usuario.trim().toLowerCase();
+  const d = Object.fromEntries(new FormData(e.target)), usuario = d.usuario.trim().toLowerCase();
   if (d.password !== d.password2) { $('#errCrear').textContent = 'Las contraseñas no coinciden'; return; }
   if (DB.usuarios.some(u => u.usuario === usuario)) { $('#errCrear').textContent = 'Ese usuario ya existe, elija otro'; return; }
-  const u = { id: nuevoId(), usuario, nombre: d.nombre.trim(), pass: hash(d.password), creado: new Date().toISOString() };
-  DB.usuarios.push(u); guardar();
-  e.target.reset(); entrar(u, 'Cuenta creada');
+  const u = { id: nuevoId(), usuario, nombre: d.nombre.trim(), pass: hash(d.password),
+    rol: DB.usuarios.length ? 'Usuario' : 'Administrador', activo: true, creado: new Date().toLocaleString('es-CO') };
+  DB.usuarios.push(u); guardar(); e.target.reset();
+  entrar(u); registrar('Crear cuenta', `${u.usuario} (${u.rol})`);
 };
-
 $('#formEntrar').onsubmit = (e) => {
   e.preventDefault();
   const d = Object.fromEntries(new FormData(e.target));
   const u = DB.usuarios.find(x => x.usuario === d.usuario.trim().toLowerCase());
   if (!u || u.pass !== hash(d.password)) { $('#errEntrar').textContent = 'Usuario o contraseña incorrectos'; return; }
-  e.target.reset(); entrar(u, 'Inicio de sesión');
+  if (!u.activo) { $('#errEntrar').textContent = 'Esta cuenta está desactivada. Hable con el administrador.'; return; }
+  e.target.reset(); entrar(u); registrar('Inicio de sesión', u.usuario);
 };
-
-function entrar(u, accion) {
-  sesion = u; MIS = datosDe(u);
+function entrar(u) {
+  sesion = u;
   try { sessionStorage.setItem('sesion-costos', u.id); } catch (e) {}
-  if (accion) registrar(accion, u.usuario);
+  if (!buscar('empresas', DB.empresaActiva[u.id])) DB.empresaActiva[u.id] = T.empresas[0] ? T.empresas[0].id : null;
   $('#acceso').classList.add('oculto'); $('#app').classList.remove('oculto');
-  $('#lblNombre').textContent = u.nombre; $('#lblUsuario').textContent = '@' + u.usuario;
-  irA('inicio');
+  pintarLateral(); irA('inicio');
 }
 $('#btnSalir').onclick = () => {
-  registrar('Cierre de sesión'); sesion = MIS = null;
+  registrar('Cierre de sesión'); sesion = null;
   try { sessionStorage.removeItem('sesion-costos'); } catch (e) {}
   $('#app').classList.add('oculto'); $('#acceso').classList.remove('oculto'); pestana(false);
 };
 
-// ================= Barra lateral =================
+// =====================================================================
+//  BARRA LATERAL
+// =====================================================================
+const MENU = [
+  ['General', [['inicio', 'Inicio']]],
+  ['Datos generales', [['empresas', 'Empresas'], ['periodos', 'Periodos contables'], ['unidades', 'Unidades de medida'], ['centros', 'Centros de costos'], ['productos', 'Productos']]],
+  ['Materia prima directa', [['materiales', 'Registro de materiales'], ['estMP', 'Cantidades estándar']]],
+  ['Mano de obra directa', [['cargos', 'Cargos'], ['trabajadores', 'Trabajadores y salarios'], ['estMOD', 'Hora y tarifa estándar']]],
+  ['Costos indirectos (CIF)', [['cifPres', 'CIF presupuestado'], ['cifReal', 'CIF real']]],
+  ['Producción', [['ordenes', 'Órdenes de producción'], ['consumos', 'Materia prima utilizada'], ['hoja', 'Hoja de costos']]],
+  ['Análisis', [['variaciones', 'Análisis de variaciones']]],
+  ['Seguridad', [['usuarios', 'Usuarios y roles', 1], ['bitacora', 'Registro de actividades', 1], ['cuenta', 'Mi cuenta']]],
+];
+let vistaActual = 'inicio';
+function pintarLateral() {
+  $('#menu').innerHTML = MENU.map(([g, items]) => `<div class="grupo">${g}</div>` +
+    items.filter(([, , admin]) => !admin || esAdmin()).map(([k, l]) => `<button data-v="${k}" class="${k === vistaActual ? 'activo' : ''}">${l}</button>`).join('')).join('');
+  $('#menu').querySelectorAll('button').forEach(b => b.onclick = () => irA(b.dataset.v));
+  $('#lblNombre').textContent = sesion.nombre; $('#lblRol').textContent = sesion.rol;
+  const sel = $('#selEmpresa');
+  sel.innerHTML = T.empresas.length ? T.empresas.map(e => `<option value="${e.id}">${esc(e.razon_social)}</option>`).join('') : '<option value="">(sin empresas)</option>';
+  sel.value = empresaId() || '';
+}
+$('#selEmpresa').onchange = (e) => { DB.empresaActiva[sesion.id] = Number(e.target.value) || null; guardar(); irA(vistaActual); };
+$('#btnMenu').onclick = () => $('#lateral').classList.add('abierto');
+document.addEventListener('click', (e) => { const l = $('#lateral'); if (l.classList.contains('abierto') && !l.contains(e.target) && e.target !== $('#btnMenu')) l.classList.remove('abierto'); });
+
 function irA(v) {
-  document.querySelectorAll('.vista').forEach(x => x.classList.add('oculto'));
-  $('#v-' + v).classList.remove('oculto');
-  document.querySelectorAll('#menu button').forEach(b => b.classList.toggle('activo', b.dataset.v === v));
+  vistaActual = v;
+  $('#menu').querySelectorAll('button').forEach(b => b.classList.toggle('activo', b.dataset.v === v));
   $('#lateral').classList.remove('abierto');
-  ({ inicio: pintarInicio, empresas: pintarEmpresas, bitacora: pintarBitacora, cuenta: pintarCuenta }[v] || (() => {}))();
+  (VISTAS[v] || (() => vistaEntidad(v)))();
   window.scrollTo(0, 0);
 }
-document.querySelectorAll('#menu button').forEach(b => b.onclick = () => irA(b.dataset.v));
-$('#btnMenu').onclick = () => $('#lateral').classList.add('abierto');
-$('#lateral').addEventListener('click', (e) => { if (e.target === $('#lateral')) $('#lateral').classList.remove('abierto'); });
+const sinEmpresa = () => `<div class="aviso">Primero cree una empresa en <b>Datos generales → Empresas</b> y selecciónela arriba en la barra lateral.</div>`;
 
-// ================= Inicio =================
-function pintarInicio() {
-  $('#saludo').textContent = `Bienvenido, ${sesion.nombre.split(' ')[0]}`;
-  $('#nEmpresas').textContent = MIS.empresas.length;
-  $('#nAnalisis').textContent = MIS.analisis || 0;
-  $('#nActividades').textContent = MIS.bitacora.length;
+// =====================================================================
+//  VISTA GENÉRICA (formulario + tabla) para cada módulo
+// =====================================================================
+function campoHTML(c) {
+  const req = c.req ? 'required' : '';
+  if (c.t === 'select') {
+    const lista = typeof c.o === 'function' ? c.o() : c.o.map(x => [x, x]);
+    return `<label>${c.l}<select name="${c.n}" ${req}>${c.ref ? '<option value="">— Seleccione —</option>' : ''}${lista.map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join('')}</select></label>`;
+  }
+  const tipoInput = c.t === 'number' ? 'number" step="any' : c.t || 'text';
+  return `<label>${c.l}<input name="${c.n}" type="${tipoInput}" ${req} value="${c.def ?? ''}"></label>`;
+}
+function vistaEntidad(k) {
+  const e = E[k], V = $('#vista');
+  if (!e) return;
+  if (!e.global && !empresaId()) { V.innerHTML = `<h2>${e.titulo}</h2><p class="desc">${e.desc}</p>${sinEmpresa()}`; return; }
+  const lista = filas(k);
+  V.innerHTML = `<h2>${e.titulo}</h2><p class="desc">${e.desc}</p>${e.arriba ? e.arriba() : ''}
+    ${puedeEditar() ? `<form id="fEnt" class="formulario"><input type="hidden" name="id">${e.campos.map(campoHTML).join('')}
+      <div class="acciones"><button>Guardar</button><button type="button" class="sec oculto" id="btnCancelar">Cancelar</button></div></form>`
+      : '<div class="aviso">Su rol es <b>Estudiante</b>: puede consultar, pero no modificar.</div>'}
+    <div class="tabla"><table><thead><tr>${e.cols.map(([l, , d]) => `<th class="${d ? 'num' : ''}">${l}</th>`).join('')}<th></th></tr></thead>
+    <tbody>${lista.map(r => `<tr>${e.cols.map(([, f, d]) => `<td class="${d ? 'num' : ''}">${f(r)}</td>`).join('')}
+      <td class="acc">${puedeEditar() ? `<button class="sec" data-ed="${r.id}">Editar</button>` : ''}
+      ${puedeEliminar() ? ` <button class="peligro" data-el="${r.id}">Eliminar</button>` : ''}</td></tr>`).join('')
+      || `<tr><td class="vacio" colspan="${e.cols.length + 1}">Aún no hay registros.</td></tr>`}</tbody></table></div>`;
+
+  const f = $('#fEnt');
+  if (f) {
+    f.onsubmit = (ev) => {
+      ev.preventDefault();
+      const d = Object.fromEntries(new FormData(f)), id = Number(d.id); delete d.id;
+      e.campos.forEach(c => { if (c.t === 'number' || c.ref) d[c.n] = d[c.n] === '' ? (c.ref ? null : 0) : Number(d[c.n]); });
+      if (e.unico && lista.some(r => String(r[e.unico]).trim().toLowerCase() === String(d[e.unico]).trim().toLowerCase() && r.id !== id)) {
+        alert(`Ya existe un registro con ese ${e.campos.find(c => c.n === e.unico).l.toLowerCase()}.`); return;
+      }
+      const etiqueta = d[e.campos[0].n];
+      if (id) { Object.assign(buscar(k, id), d); registrar(`Editar ${e.titulo.toLowerCase()}`, etiqueta); }
+      else {
+        const nuevo = { id: nuevoId(), ...d };
+        if (!e.global) nuevo.empresa_id = empresaId();
+        T[k].push(nuevo); registrar(`Crear en ${e.titulo.toLowerCase()}`, etiqueta);
+        if (k === 'empresas') crearDatosIniciales(nuevo);
+      }
+      guardar(); if (k === 'empresas') pintarLateral(); vistaEntidad(k);
+    };
+    $('#btnCancelar').onclick = () => vistaEntidad(k);
+  }
+  V.querySelector('tbody').onclick = (ev) => {
+    const ed = ev.target.dataset.ed, el = ev.target.dataset.el;
+    if (ed) {
+      const r = buscar(k, ed); f.elements.id.value = r.id;
+      e.campos.forEach(c => { f.elements[c.n].value = r[c.n] ?? ''; });
+      $('#btnCancelar').classList.remove('oculto'); f.scrollIntoView({ behavior: 'smooth' });
+    }
+    if (el && confirm('¿Eliminar este registro?' + (k === 'empresas' ? '\nSe eliminará también toda la información de la empresa.' : ''))) {
+      const r = buscar(k, el);
+      T[k] = T[k].filter(x => x.id !== r.id);
+      if (k === 'empresas') { TABLAS.forEach(t => { if (t !== 'empresas') T[t] = T[t].filter(x => x.empresa_id !== r.id); });
+        Object.keys(DB.empresaActiva).forEach(u => { if (DB.empresaActiva[u] === r.id) DB.empresaActiva[u] = T.empresas[0] ? T.empresas[0].id : null; }); }
+      if (k === 'ordenes') T.consumos = T.consumos.filter(c => c.orden_id !== r.id);
+      Object.assign(DB.t, T);
+      registrar(`Eliminar de ${e.titulo.toLowerCase()}`, r[e.campos[0].n]); guardar();
+      if (k === 'empresas') pintarLateral(); vistaEntidad(k);
+    }
+  };
+}
+function crearDatosIniciales(emp) {
+  [['UND', 'Unidad'], ['KG', 'Kilogramo'], ['GR', 'Gramo'], ['LT', 'Litro'], ['MT', 'Metro'], ['HR', 'Hora']]
+    .forEach(([codigo, nombre]) => T.unidades.push({ id: nuevoId(), empresa_id: emp.id, codigo, nombre }));
+  if (!empresaId()) DB.empresaActiva[sesion.id] = emp.id;
 }
 
-// ================= Empresas =================
-function pintarEmpresas() {
-  $('#tablaEmpresas').innerHTML = MIS.empresas.map(e => `<tr>
-    <td>${esc(e.nit)}</td><td>${esc(e.razon_social)}</td><td>${esc(e.regimen_tributario)}</td><td>${esc(e.telefono)}</td>
-    <td><button class="sec" data-editar="${e.id}">Editar</button> <button class="peligro" data-eliminar="${e.id}">Eliminar</button></td></tr>`).join('')
-    || '<tr><td colspan="5">Aún no hay empresas. Registre la primera con el formulario.</td></tr>';
-}
-function limpiarEmpresa() { const f = $('#formEmpresa'); f.reset(); f.elements.id.value = ''; $('#btnCancelarEmpresa').classList.add('oculto'); }
-$('#btnCancelarEmpresa').onclick = limpiarEmpresa;
-$('#tablaEmpresas').onclick = (ev) => {
-  const ed = ev.target.dataset.editar, el = ev.target.dataset.eliminar;
-  if (ed) {
-    const e = MIS.empresas.find(x => x.id == ed), f = $('#formEmpresa');
-    for (const k of ['id', 'nit', 'razon_social', 'regimen_tributario', 'direccion', 'telefono']) f.elements[k].value = e[k] || '';
-    $('#btnCancelarEmpresa').classList.remove('oculto'); f.elements.nit.focus();
-  }
-  if (el && confirm('¿Eliminar esta empresa?')) {
-    const e = MIS.empresas.find(x => x.id == el);
-    MIS.empresas = MIS.empresas.filter(x => x.id != el); registrar('Eliminar empresa', e.razon_social); pintarEmpresas();
-  }
-};
-$('#formEmpresa').onsubmit = (ev) => {
-  ev.preventDefault();
-  const d = Object.fromEntries(new FormData(ev.target));
-  if (MIS.empresas.some(x => x.nit === d.nit && x.id != d.id)) { alert('Ya existe una empresa con ese NIT'); return; }
-  if (d.id) { Object.assign(MIS.empresas.find(x => x.id == d.id), d, { id: Number(d.id) }); registrar('Editar empresa', d.razon_social); }
-  else { MIS.empresas.push({ ...d, id: nuevoId() }); registrar('Crear empresa', d.razon_social); }
-  limpiarEmpresa(); pintarEmpresas();
-};
+// =====================================================================
+//  VISTAS ESPECIALES
+// =====================================================================
+const VISTAS = {
+  inicio() {
+    const emp = buscar('empresas', empresaId());
+    const pasos = [
+      ['Crear la empresa', T.empresas.length], ['Crear un periodo contable', emp && filas('periodos').length],
+      ['Registrar productos', emp && filas('productos').length], ['Registrar materiales y su precio estándar', emp && filas('materiales').length],
+      ['Definir cantidades estándar de materiales', emp && filas('estMP').length], ['Registrar trabajadores y la hora/tarifa estándar', emp && filas('estMOD').length],
+      ['Registrar el CIF presupuestado y el CIF real', emp && filas('cifPres').length && filas('cifReal').length],
+      ['Crear órdenes de producción y la materia prima utilizada', emp && filas('ordenes').length && filas('consumos').length],
+      ['Revisar la hoja de costos y el análisis de variaciones', 0]];
+    $('#vista').innerHTML = `<h2>Bienvenido, ${esc(sesion.nombre.split(' ')[0])}</h2>
+      <p class="desc">${emp ? `Empresa activa: <b>${esc(emp.razon_social)}</b> · NIT ${esc(emp.nit)}` : 'Aún no hay una empresa seleccionada.'}</p>
+      ${emp ? `<div class="cifras">
+        <div class="cifra"><span>Productos</span><b>${filas('productos').length}</b></div>
+        <div class="cifra"><span>Materiales</span><b>${filas('materiales').length}</b></div>
+        <div class="cifra"><span>Trabajadores</span><b>${filas('trabajadores').length}</b></div>
+        <div class="cifra"><span>Órdenes de producción</span><b>${filas('ordenes').length}</b></div></div>` : ''}
+      <h3>Pasos para usar el sistema</h3>
+      <ol class="pasos">${pasos.map(([t, ok]) => `<li class="${ok ? 'hecho' : ''}">${t}</li>`).join('')}</ol>`;
+  },
 
-// ================= Variaciones =================
-function tipo(v) { return v < 0 ? 'Favorable' : v > 0 ? 'Desfavorable' : 'Sin variación'; }
-$('#formVar').onsubmit = (ev) => {
-  ev.preventDefault();
-  const d = Object.fromEntries(new FormData(ev.target)); const f = k => parseFloat(d[k]) || 0;
-  const cap = f('capacidad_normal');
-  const tasaVar = cap ? f('cif_variable_presup') / cap : 0, tasaFija = cap ? f('cif_fijo_presup') / cap : 0;
-  const cifAplicado = (tasaVar + tasaFija) * f('base_std_permitida');
-  const presFlexible = f('cif_fijo_presup') + tasaVar * f('base_std_permitida');
-  const items = [
-    ['Precio de materiales', (f('precio_real') - f('precio_std')) * f('cantidad_real')],
-    ['Cantidad de materiales', (f('cantidad_real') - f('cantidad_std_permitida')) * f('precio_std')],
-    ['Tarifa de mano de obra', (f('tarifa_real') - f('tarifa_std')) * f('horas_reales')],
-    ['Eficiencia de mano de obra', (f('horas_reales') - f('horas_std_permitidas')) * f('tarifa_std')],
-    ['Presupuesto de CIF', f('cif_real') - presFlexible],
-    ['Volumen de CIF', presFlexible - cifAplicado],
-  ];
+  hoja() {
+    const V = $('#vista');
+    if (!empresaId()) { V.innerHTML = `<h2>Hoja de costos</h2>${sinEmpresa()}`; return; }
+    const ords = filas('ordenes');
+    V.innerHTML = `<h2>Hoja de costos</h2><p class="desc">Costo estándar unitario y total, costo real, diferencia y variaciones de cada orden.</p>
+      ${ords.length ? `<div class="filtros"><label>Orden de producción<select id="selOrden">${ords.map(o => `<option value="${o.id}">${esc(o.numero)} - ${esc(nombre('productos', o.producto_id))}</option>`).join('')}</select></label></div><div id="hojaDet"></div>`
+        : '<div class="aviso">Primero cree una orden en <b>Producción → Órdenes de producción</b>.</div>'}`;
+    if (!ords.length) return;
+    const pintar = () => {
+      const o = buscar('ordenes', $('#selOrden').value), c = calcularOrden(o);
+      const fila = (l, su, st, re) => { const d = re - st; return `<tr${l === 'Total' ? ' class="total"' : ''}><td>${l}</td><td class="num">${pesos(su)}</td><td class="num">${pesos(st)}</td><td class="num">${pesos(re)}</td><td class="num">${pesos(Math.abs(d))}</td><td class="${claseTipo(d)}">${tipo(d)}</td></tr>`; };
+      const q = c.q || 1;
+      $('#hojaDet').innerHTML = `
+        ${!c.pres ? '<div class="aviso">Este periodo no tiene <b>CIF presupuestado</b>; el CIF aparece en cero.</div>' : ''}
+        <div class="cifras">
+          <div class="cifra"><span>Producto</span><b style="font-size:18px">${esc(nombre('productos', o.producto_id))}</b></div>
+          <div class="cifra"><span>Cantidad producida</span><b>${num(c.q)}</b></div>
+          <div class="cifra"><span>Estado</span><b style="font-size:18px">${esc(o.estado)}</b></div>
+          <div class="cifra"><span>Costo real unitario</span><b>${pesos(c.real.total / q)}</b></div></div>
+        <div class="tabla"><table><thead><tr><th>Elemento del costo</th><th class="num">Estándar unitario</th><th class="num">Estándar total</th><th class="num">Real total</th><th class="num">Diferencia</th><th>Resultado</th></tr></thead><tbody>
+          ${fila('Materia prima directa', c.std.mp / q, c.std.mp, c.real.mp)}
+          ${fila('Mano de obra directa', c.std.mod / q, c.std.mod, c.real.mod)}
+          ${fila('Costos indirectos (CIF)', c.std.cif / q, c.std.cif, c.real.cif)}
+          ${fila('Total', c.std.total / q, c.std.total, c.real.total)}</tbody></table></div>
+        <h3>Variaciones de la orden</h3>${tablaVariaciones([
+          ['Precio de materiales', c.materiales.reduce((s, m) => s + m.varPrecio, 0)],
+          ['Cantidad de materiales', c.materiales.reduce((s, m) => s + m.varCantidad, 0)],
+          ['Tarifa de mano de obra', c.varTarifa], ['Eficiencia de mano de obra', c.varEficiencia]])}
+        <h3>Detalle de materiales</h3>${tablaMateriales(c.materiales)}
+        <h3>Detalle de mano de obra</h3>
+        <div class="tabla"><table><thead><tr><th class="num">Horas estándar</th><th class="num">Tarifa estándar</th><th class="num">Horas reales</th><th class="num">Tarifa real</th><th class="num">Costo estándar</th><th class="num">Costo real</th></tr></thead>
+          <tbody><tr><td class="num">${num(c.HE)}</td><td class="num">${pesos(c.TE)}</td><td class="num">${num(c.HR)}</td><td class="num">${pesos(c.TR)}</td><td class="num">${pesos(c.std.mod)}</td><td class="num">${pesos(c.real.mod)}</td></tr></tbody></table></div>`;
+    };
+    $('#selOrden').onchange = pintar; pintar();
+  },
+
+  variaciones() {
+    const V = $('#vista');
+    if (!empresaId()) { V.innerHTML = `<h2>Análisis de variaciones</h2>${sinEmpresa()}`; return; }
+    const pers = filas('periodos');
+    V.innerHTML = `<h2>Análisis de variaciones</h2><p class="desc">Variaciones del periodo: positivo = desfavorable, negativo = favorable.</p>
+      ${pers.length ? `<div class="filtros"><label>Periodo<select id="selPer">${pers.map(p => `<option value="${p.id}">${esc(p.nombre)}</option>`).join('')}</select></label></div><div id="varDet"></div>`
+        : '<div class="aviso">Primero cree un periodo en <b>Datos generales → Periodos contables</b>.</div>'}`;
+    if (!pers.length) return;
+    const pintar = () => {
+      const r = analisisPeriodo(Number($('#selPer').value));
+      const items = [['Precio de materiales', r.varPrecioMP], ['Cantidad de materiales', r.varCantidadMP],
+        ['Tarifa de mano de obra', r.varTarifa], ['Eficiencia de mano de obra', r.varEficiencia],
+        ['Presupuesto de CIF', r.varPresupuestoCIF], ['Volumen de CIF', r.varVolumenCIF]];
+      const fav = items.filter(([, v]) => v < -0.005).reduce((s, [, v]) => s + v, 0);
+      const des = items.filter(([, v]) => v > 0.005).reduce((s, [, v]) => s + v, 0);
+      $('#varDet').innerHTML = `
+        ${!r.ords.length ? '<div class="aviso">Este periodo no tiene órdenes de producción.</div>' : ''}
+        ${!r.pres ? '<div class="aviso">Este periodo no tiene <b>CIF presupuestado</b>; las variaciones de CIF aparecen en cero.</div>' : ''}
+        <div class="cifras">
+          <div class="cifra"><span>Variación total</span><b class="${claseTipo(r.total)}">${pesos(Math.abs(r.total))}</b><span>${tipo(r.total)}</span></div>
+          <div class="cifra"><span>Variaciones favorables</span><b class="fav">${pesos(Math.abs(fav))}</b></div>
+          <div class="cifra"><span>Variaciones desfavorables</span><b class="desf">${pesos(des)}</b></div></div>
+        ${tablaVariaciones(items)}
+        ${r.pres ? `<h3>Datos del CIF</h3><div class="tabla"><table><thead><tr><th>Base</th><th class="num">Tasa predeterminada</th><th class="num">Base estándar permitida</th><th class="num">CIF presupuestado</th><th class="num">Presupuesto flexible</th><th class="num">CIF aplicado</th><th class="num">CIF real</th></tr></thead>
+          <tbody><tr><td>${esc(r.pres.base)}</td><td class="num">${pesos(tasas(r.pres).total)}</td><td class="num">${num(r.baseStd)}</td><td class="num">${pesos(n(r.pres.fijo) + n(r.pres.variable))}</td><td class="num">${pesos(r.presFlexible)}</td><td class="num">${pesos(r.cifAplicado)}</td><td class="num">${pesos(r.cifReal)}</td></tr></tbody></table></div>` : ''}
+        ${r.ords.length ? `<h3>Por orden de producción</h3><div class="tabla"><table><thead><tr><th>Orden</th><th>Producto</th><th class="num">Precio MP</th><th class="num">Cantidad MP</th><th class="num">Tarifa MOD</th><th class="num">Eficiencia MOD</th></tr></thead><tbody>
+          ${r.ords.map(({ o, c }) => { const v = (x) => `<td class="num ${claseTipo(x)}">${pesos(Math.abs(x))}</td>`;
+            return `<tr><td>${esc(o.numero)}</td><td>${esc(nombre('productos', o.producto_id))}</td>${v(c.materiales.reduce((s, m) => s + m.varPrecio, 0))}${v(c.materiales.reduce((s, m) => s + m.varCantidad, 0))}${v(c.varTarifa)}${v(c.varEficiencia)}</tr>`; }).join('')}
+          </tbody></table></div>` : ''}`;
+    };
+    $('#selPer').onchange = pintar; pintar();
+  },
+
+  usuarios() {
+    if (!esAdmin()) return irA('inicio');
+    $('#vista').innerHTML = `<h2>Usuarios y roles</h2>
+      <p class="desc">Control de permisos: <b>Administrador</b> hace todo (incluye eliminar, usuarios y registro de actividades) · <b>Usuario</b> crea y edita · <b>Estudiante</b> solo consulta.</p>
+      <div class="tabla"><table><thead><tr><th>Usuario</th><th>Nombre</th><th>Creado</th><th>Rol</th><th>Estado</th></tr></thead><tbody>
+      ${DB.usuarios.map(u => `<tr><td>@${esc(u.usuario)}</td><td>${esc(u.nombre)}</td><td>${esc(u.creado)}</td>
+        <td><select data-rol="${u.id}" ${u.id === sesion.id ? 'disabled' : ''}>${['Administrador', 'Usuario', 'Estudiante'].map(r => `<option ${r === u.rol ? 'selected' : ''}>${r}</option>`).join('')}</select></td>
+        <td>${u.id === sesion.id ? 'Activo (usted)' : `<button class="sec" data-act="${u.id}">${u.activo ? 'Desactivar' : 'Activar'}</button>`}</td></tr>`).join('')}
+      </tbody></table></div>`;
+    $('#vista').querySelectorAll('[data-rol]').forEach(s => s.onchange = () => {
+      const u = buscar0(s.dataset.rol); u.rol = s.value; registrar('Cambiar rol', `${u.usuario} → ${u.rol}`); guardar();
+    });
+    $('#vista').querySelectorAll('[data-act]').forEach(b => b.onclick = () => {
+      const u = buscar0(b.dataset.act); u.activo = !u.activo; registrar(u.activo ? 'Activar usuario' : 'Desactivar usuario', u.usuario); guardar(); VISTAS.usuarios();
+    });
+  },
+
+  bitacora() {
+    if (!esAdmin()) return irA('inicio');
+    $('#vista').innerHTML = `<h2>Registro de actividades</h2><p class="desc">Acciones importantes de todos los usuarios (últimas 500).</p>
+      <div class="tabla"><table><thead><tr><th>Fecha</th><th>Usuario</th><th>Acción</th><th>Detalle</th></tr></thead><tbody>
+      ${DB.bitacora.map(b => `<tr><td>${esc(b.fecha)}</td><td>@${esc(b.usuario)}</td><td>${esc(b.accion)}</td><td>${esc(b.detalle)}</td></tr>`).join('') || '<tr><td colspan="4" class="vacio">Sin actividades.</td></tr>'}
+      </tbody></table></div>`;
+  },
+
+  cuenta() {
+    $('#vista').innerHTML = `<h2>Mi cuenta</h2><p class="desc">Usuario <b>@${esc(sesion.usuario)}</b> · Rol <b>${esc(sesion.rol)}</b></p>
+      <form id="fCuenta" class="formulario" style="max-width:820px">
+        <label>Nombre completo<input name="nombre" required value="${esc(sesion.nombre)}"></label>
+        <label>Contraseña actual<input name="actual" type="password"></label>
+        <label>Nueva contraseña<input name="nueva" type="password" minlength="4"></label>
+        <div class="acciones"><button>Guardar cambios</button></div></form><p class="error" id="errCuenta"></p>`;
+    $('#fCuenta').onsubmit = (ev) => {
+      ev.preventDefault(); const d = Object.fromEntries(new FormData(ev.target)), m = $('#errCuenta');
+      if (d.nueva) { if (sesion.pass !== hash(d.actual)) { m.className = 'error'; m.textContent = 'La contraseña actual no es correcta'; return; }
+        sesion.pass = hash(d.nueva); registrar('Cambiar contraseña'); }
+      sesion.nombre = d.nombre.trim(); guardar(); registrar('Actualizar cuenta'); pintarLateral();
+      m.className = 'error ok'; m.textContent = 'Cambios guardados';
+    };
+  },
+};
+const buscar0 = (id) => DB.usuarios.find(u => u.id === Number(id));
+
+function tablaVariaciones(items) {
   const total = items.reduce((s, [, v]) => s + v, 0);
-  const fila = (n, v, neg) => `<tr class="${v < 0 ? 'fav' : v > 0 ? 'desf' : ''}"><td>${neg ? `<b>${n}</b>` : n}</td><td class="num">${pesos(Math.abs(v))}</td><td class="tipo">${tipo(v)}</td></tr>`;
-  $('#resultadoVar').innerHTML = `
-    <div class="resumen">Tasa predeterminada de CIF: <b>${(tasaVar + tasaFija).toFixed(4)}</b> por unidad de base ·
-      CIF aplicado: <b>${pesos(cifAplicado)}</b> · Presupuesto flexible: <b>${pesos(presFlexible)}</b></div>
-    <div class="tabla"><table><thead><tr><th>Variación</th><th style="text-align:right">Valor</th><th>Tipo</th></tr></thead><tbody>
-      ${items.map(([n, v]) => fila(n, v)).join('')}${fila('Variación total', total, true)}
+  const fila = (l, v, t) => `<tr${t ? ' class="total"' : ''}><td>${l}</td><td class="num">${pesos(Math.abs(v))}</td><td class="${claseTipo(v)}">${tipo(v)}</td></tr>`;
+  return `<div class="tabla"><table><thead><tr><th>Variación</th><th class="num">Valor</th><th>Resultado</th></tr></thead><tbody>
+    ${items.map(([l, v]) => fila(l, v)).join('')}${fila('Variación total', total, 1)}</tbody></table></div>`;
+}
+function tablaMateriales(ms) {
+  if (!ms.length) return '<div class="aviso">Sin materiales: defina las cantidades estándar y registre la materia prima utilizada.</div>';
+  const v = (x) => `<td class="num ${claseTipo(x)}">${pesos(Math.abs(x))}</td>`;
+  return `<div class="tabla"><table><thead><tr><th>Material</th><th class="num">Cant. estándar</th><th class="num">Precio estándar</th><th class="num">Cant. real</th><th class="num">Precio real</th><th class="num">Var. precio</th><th class="num">Var. cantidad</th></tr></thead><tbody>
+    ${ms.map(m => `<tr><td>${esc(m.nombre)}</td><td class="num">${num(m.CE, 4)}</td><td class="num">${pesos(m.PE)}</td><td class="num">${num(m.CR, 4)}</td><td class="num">${pesos(m.PR)}</td>${v(m.varPrecio)}${v(m.varCantidad)}</tr>`).join('')}
     </tbody></table></div>`;
-  MIS.analisis = (MIS.analisis || 0) + 1;
-  registrar('Calcular variaciones', `Total ${pesos(Math.abs(total))} (${tipo(total)})`);
-};
-$('#btnEjemplo').onclick = () => {
-  const ej = { precio_std: 5000, precio_real: 5200, cantidad_std_permitida: 1000, cantidad_real: 980,
-    tarifa_std: 12000, tarifa_real: 12500, horas_std_permitidas: 400, horas_reales: 420,
-    cif_fijo_presup: 3000000, cif_variable_presup: 2000000, capacidad_normal: 500, base_std_permitida: 400, cif_real: 4700000 };
-  const f = $('#formVar'); for (const k in ej) f.elements[k].value = ej[k];
-};
-
-// ================= Bitácora =================
-function pintarBitacora() {
-  $('#tablaBitacora').innerHTML = MIS.bitacora.map(b =>
-    `<tr><td>${esc(b.fecha)}</td><td>${esc(b.accion)}</td><td>${esc(b.detalle)}</td></tr>`).join('')
-    || '<tr><td colspan="3">Sin actividades.</td></tr>';
 }
 
-// ================= Mi cuenta =================
-function pintarCuenta() {
-  const f = $('#formCuenta'); f.reset(); $('#errCuenta').textContent = '';
-  f.elements.nombre.value = sesion.nombre; f.elements.usuario.value = sesion.usuario;
-}
-$('#formCuenta').onsubmit = (ev) => {
-  ev.preventDefault();
-  const d = Object.fromEntries(new FormData(ev.target));
-  if (d.nueva) {
-    if (sesion.pass !== hash(d.actual)) { $('#errCuenta').textContent = 'La contraseña actual no es correcta'; return; }
-    sesion.pass = hash(d.nueva); registrar('Cambiar contraseña');
-  }
-  sesion.nombre = d.nombre.trim(); $('#lblNombre').textContent = sesion.nombre;
-  guardar(); registrar('Actualizar datos de cuenta');
-  $('#errCuenta').style.color = 'var(--fav)'; $('#errCuenta').textContent = 'Cambios guardados';
-  setTimeout(() => { $('#errCuenta').style.color = ''; }, 2500);
-};
-
-// ================= Arranque =================
+// =====================================================================
+//  ARRANQUE
+// =====================================================================
 if (sesion) entrar(sesion); else pestana(DB.usuarios.length === 0);
 </script>
 </body>
