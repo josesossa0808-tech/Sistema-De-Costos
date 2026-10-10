@@ -67,7 +67,7 @@
 <div class="aviso">Versión web de demostración: los datos se guardan en este navegador. La versión completa (Python + MySQL) está en el repositorio.</div>
 
 <!-- ===== Inicio de sesión ===== -->
-<section id="login">
+<section id="login" class="oculto">
   <form id="formLogin" class="tarjeta">
     <h1>Sistema de Costos Estándar</h1>
     <p class="sub">Ingrese sus credenciales</p>
@@ -336,8 +336,13 @@ function pintarBitacora() {
     || '<tr><td colspan="4">Sin actividades.</td></tr>';
 }
 
-// ================= Arranque =================
-if (sesion && DB.usuarios.some(u => u.id === sesion.id && u.activo)) mostrarPanel(); else mostrarLogin();
+// ================= Arranque (acceso directo, sin inicio de sesión) =================
+const admin = DB.usuarios.find(u => u.rol === 'Administrador') || DB.usuarios[0];
+sesion = { id: admin.id, usuario: admin.usuario, nombre: admin.nombre, rol: admin.rol };
+$('#btnSalir').classList.add('oculto');
+mostrarPanel();
+$('#lblUsuario').textContent = '';
+document.querySelectorAll('[data-v=usuarios]').forEach(x => x.classList.add('oculto'));
 </script>
 </body>
 </html>
