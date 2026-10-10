@@ -7,16 +7,16 @@
 <style>
   :root {
     --fondo: #f3f5f8; --tarjeta: #ffffff; --texto: #1d2733; --suave: #5f6b7a;
-    --borde: #dde3ea; --primario: #1f5fae; --primario-txt: #ffffff;
-    --barra: #1d2733; --barra-txt: #ffffff; --sec: #e3e8ef;
-    --peligro: #c0392b; --fav: #1e8449; --desf: #c0392b; --aviso: #fff6dd; --aviso-borde: #f0d58a;
+    --borde: #dde3ea; --primario: #1f5fae; --primario-txt: #ffffff; --sec: #e8edf3;
+    --lateral: #17202b; --lateral-txt: #c9d3df; --lateral-activo: #24364d; --lateral-fuerte: #ffffff;
+    --peligro: #c0392b; --fav: #1e8449; --desf: #c0392b;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --fondo: #12171e; --tarjeta: #1b222c; --texto: #e6ebf1; --suave: #9aa6b5;
-      --borde: #2c3542; --primario: #4b8ee0; --primario-txt: #0d1218;
-      --barra: #0c1015; --barra-txt: #e6ebf1; --sec: #2a333f;
-      --peligro: #e5675a; --fav: #4cc27f; --desf: #e5675a; --aviso: #2b2616; --aviso-borde: #5c4f22;
+      --fondo: #10151b; --tarjeta: #19212b; --texto: #e6ebf1; --suave: #9aa6b5;
+      --borde: #2b3542; --primario: #4b8ee0; --primario-txt: #0b1016; --sec: #26303c;
+      --lateral: #0b1016; --lateral-txt: #aeb9c6; --lateral-activo: #1c2a3b; --lateral-fuerte: #ffffff;
+      --peligro: #e5675a; --fav: #4cc27f; --desf: #e5675a;
     }
   }
   * { box-sizing: border-box; }
@@ -24,80 +24,141 @@
   button { background: var(--primario); color: var(--primario-txt); border: 0; padding: 9px 14px; border-radius: 6px; cursor: pointer; font: inherit; }
   button.sec { background: var(--sec); color: var(--texto); }
   button.peligro { background: var(--peligro); color: #fff; }
+  button.enlace { background: none; color: var(--primario); padding: 0; text-decoration: underline; }
   input, select { padding: 9px; border: 1px solid var(--borde); border-radius: 6px; width: 100%; font: inherit; background: var(--tarjeta); color: var(--texto); }
   label { display: block; font-size: 14px; margin-bottom: 10px; color: var(--suave); }
   label input, label select { margin-top: 4px; }
   .oculto { display: none !important; }
-  .error { color: var(--peligro); min-height: 1.2em; }
-  .aviso { background: var(--aviso); border: 1px solid var(--aviso-borde); padding: 8px 14px; font-size: 13px; text-align: center; }
+  .error { color: var(--peligro); min-height: 1.2em; margin: 6px 0 0; font-size: 14px; }
 
-  /* Login */
-  #login { display: grid; place-items: center; min-height: calc(100vh - 40px); padding: 16px; }
-  .tarjeta { background: var(--tarjeta); padding: 32px; border-radius: 12px; width: 100%; max-width: 360px; box-shadow: 0 4px 20px rgba(0,0,0,.08); border: 1px solid var(--borde); }
-  .tarjeta h1 { font-size: 20px; margin: 0 0 4px; }
+  /* ===== Acceso (iniciar sesión / crear cuenta) ===== */
+  #acceso { display: grid; place-items: center; min-height: 100vh; padding: 16px; }
+  .tarjeta { background: var(--tarjeta); padding: 30px; border-radius: 12px; width: 100%; max-width: 380px; box-shadow: 0 6px 24px rgba(0,0,0,.08); border: 1px solid var(--borde); }
+  .tarjeta h1 { font-size: 21px; margin: 0 0 4px; }
   .tarjeta .sub { color: var(--suave); margin: 0 0 18px; }
-  .tarjeta button { width: 100%; margin-top: 6px; }
-  .pista { font-size: 13px; color: var(--suave); margin-top: 14px; text-align: center; }
+  .pestanas { display: grid; grid-template-columns: 1fr 1fr; background: var(--sec); border-radius: 8px; padding: 4px; margin-bottom: 18px; }
+  .pestanas button { background: transparent; color: var(--suave); }
+  .pestanas button.activa { background: var(--tarjeta); color: var(--texto); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .tarjeta form button[type=submit] { width: 100%; margin-top: 6px; }
+  .nota { font-size: 12px; color: var(--suave); margin-top: 16px; text-align: center; }
 
-  /* Panel */
-  header { display: flex; gap: 12px; align-items: center; padding: 12px 16px; background: var(--barra); color: var(--barra-txt); flex-wrap: wrap; }
-  header .usuario { margin-left: auto; font-size: 14px; }
-  nav { display: flex; gap: 4px; padding: 8px 12px; background: var(--tarjeta); border-bottom: 1px solid var(--borde); overflow-x: auto; }
-  nav button { background: transparent; color: var(--primario); white-space: nowrap; }
-  nav button.activo { background: var(--sec); color: var(--texto); }
-  main { padding: 16px; max-width: 1100px; margin: 0 auto; }
-  h2 { margin: 6px 0 14px; }
-  .fila { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  /* ===== Aplicación con barra lateral ===== */
+  #app { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+  aside { background: var(--lateral); color: var(--lateral-txt); display: flex; flex-direction: column; padding: 18px 12px; position: sticky; top: 0; height: 100vh; }
+  .marca { color: var(--lateral-fuerte); font-weight: 700; font-size: 17px; padding: 0 10px 18px; border-bottom: 1px solid rgba(255,255,255,.08); margin-bottom: 12px; line-height: 1.3; }
+  .marca small { display: block; font-weight: 400; font-size: 12px; color: var(--lateral-txt); }
+  .menu { display: flex; flex-direction: column; gap: 2px; }
+  .menu button { background: transparent; color: var(--lateral-txt); text-align: left; padding: 10px 12px; display: flex; gap: 10px; align-items: center; border-radius: 8px; }
+  .menu button:hover { background: rgba(255,255,255,.05); }
+  .menu button.activo { background: var(--lateral-activo); color: var(--lateral-fuerte); }
+  .menu svg, .salir svg { width: 18px; height: 18px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .cuenta { margin-top: auto; border-top: 1px solid rgba(255,255,255,.08); padding: 14px 10px 0; font-size: 14px; }
+  .cuenta b { color: var(--lateral-fuerte); display: block; }
+  .salir { background: transparent; color: var(--lateral-txt); padding: 8px 0; margin-top: 8px; display: flex; gap: 8px; align-items: center; }
+  .salir:hover { color: var(--lateral-fuerte); }
+  .barra-movil { display: none; }
+
+  main { padding: 26px 28px; max-width: 1100px; width: 100%; }
+  h2 { margin: 0 0 4px; }
+  .desc { color: var(--suave); margin: 0 0 18px; }
+  .fila { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
   .fila input, .fila select { width: auto; flex: 1 1 150px; }
   .rejilla { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; align-items: start; }
-  fieldset { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 8px; }
+  fieldset { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 10px; }
   legend { font-weight: 600; padding: 0 6px; }
   .tabla { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; background: var(--tarjeta); margin-top: 12px; border-radius: 8px; overflow: hidden; }
-  th, td { padding: 9px 10px; border-bottom: 1px solid var(--borde); text-align: left; }
+  table { width: 100%; border-collapse: collapse; background: var(--tarjeta); margin-top: 12px; border: 1px solid var(--borde); border-radius: 10px; overflow: hidden; }
+  th, td { padding: 10px 12px; border-bottom: 1px solid var(--borde); text-align: left; }
+  tr:last-child td { border-bottom: 0; }
   th { font-size: 13px; color: var(--suave); font-weight: 600; }
   td.num { text-align: right; font-variant-numeric: tabular-nums; }
   td button { padding: 5px 10px; font-size: 13px; }
   tr.fav td.tipo { color: var(--fav); font-weight: 600; }
   tr.desf td.tipo { color: var(--desf); font-weight: 600; }
-  .resumen { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 8px; padding: 12px 14px; margin-top: 14px; }
+  .resumen { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 10px; padding: 12px 14px; margin-top: 14px; }
+  .cifras { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 18px; }
+  .cifra { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 10px; padding: 16px; }
+  .cifra span { color: var(--suave); font-size: 13px; }
+  .cifra b { display: block; font-size: 26px; margin-top: 4px; font-variant-numeric: tabular-nums; }
+
+  @media (max-width: 760px) {
+    #app { grid-template-columns: 1fr; }
+    .barra-movil { display: flex; align-items: center; gap: 12px; background: var(--lateral); color: var(--lateral-fuerte); padding: 12px 16px; position: sticky; top: 0; z-index: 5; }
+    .barra-movil button { background: transparent; color: inherit; padding: 4px 8px; font-size: 22px; line-height: 1; }
+    aside { position: fixed; inset: 0 auto 0 0; width: 250px; z-index: 10; transform: translateX(-100%); transition: transform .2s; }
+    aside.abierto { transform: none; box-shadow: 0 0 0 100vmax rgba(0,0,0,.4); }
+    main { padding: 18px 16px; }
+  }
 </style>
 </head>
 <body>
-<div class="aviso">Versión web de demostración: los datos se guardan en este navegador. La versión completa (Python + MySQL) está en el repositorio.</div>
 
-<!-- ===== Inicio de sesión ===== -->
-<section id="login" class="oculto">
-  <form id="formLogin" class="tarjeta">
+<!-- ================= Acceso: iniciar sesión o crear cuenta ================= -->
+<section id="acceso">
+  <div class="tarjeta">
     <h1>Sistema de Costos Estándar</h1>
-    <p class="sub">Ingrese sus credenciales</p>
-    <label>Usuario <input name="usuario" required autocomplete="username"></label>
-    <label>Contraseña <input name="password" type="password" required autocomplete="current-password"></label>
-    <button type="submit">Iniciar sesión</button>
-    <p id="errorLogin" class="error"></p>
-    <p class="pista">Usuario inicial: <b>admin</b> / <b>admin123</b></p>
-  </form>
+    <p class="sub">Materiales, mano de obra, CIF y variaciones</p>
+    <div class="pestanas">
+      <button type="button" id="tabEntrar" class="activa">Iniciar sesión</button>
+      <button type="button" id="tabCrear">Crear cuenta</button>
+    </div>
+
+    <form id="formEntrar">
+      <label>Usuario <input name="usuario" required autocomplete="username"></label>
+      <label>Contraseña <input name="password" type="password" required autocomplete="current-password"></label>
+      <button type="submit">Entrar</button>
+      <p class="error" id="errEntrar"></p>
+    </form>
+
+    <form id="formCrear" class="oculto">
+      <label>Nombre completo <input name="nombre" required autocomplete="name"></label>
+      <label>Usuario <input name="usuario" required autocomplete="username" minlength="3"></label>
+      <label>Contraseña <input name="password" type="password" required autocomplete="new-password" minlength="4"></label>
+      <label>Repetir contraseña <input name="password2" type="password" required autocomplete="new-password"></label>
+      <button type="submit">Crear mi cuenta</button>
+      <p class="error" id="errCrear"></p>
+    </form>
+    <p class="nota">Las cuentas y la información se guardan en este navegador.</p>
+  </div>
 </section>
 
-<!-- ===== Panel ===== -->
-<section id="panel" class="oculto">
-  <header>
-    <strong>Sistema de Costos Estándar</strong>
-    <span class="usuario" id="lblUsuario"></span>
-    <button class="sec" id="btnSalir">Cerrar sesión</button>
-  </header>
-  <nav id="menu">
-    <button data-v="empresas">Empresas</button>
-    <button data-v="variaciones">Análisis de variaciones</button>
-    <button data-v="usuarios" class="solo-admin">Usuarios</button>
-    <button data-v="bitacora" class="solo-admin">Registro de actividades</button>
-  </nav>
+<!-- ================= Aplicación ================= -->
+<div id="app" class="oculto">
+  <div class="barra-movil"><button id="btnMenu" aria-label="Abrir menú">☰</button><strong>Sistema de Costos</strong></div>
+
+  <aside id="lateral">
+    <div class="marca">Sistema de Costos<small>Costeo estándar</small></div>
+    <nav class="menu" id="menu">
+      <button data-v="inicio"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Inicio</button>
+      <button data-v="empresas"><svg viewBox="0 0 24 24"><path d="M4 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16M15 9h4a1 1 0 0 1 1 1v11M3 21h18M8 8h3M8 12h3M8 16h3"/></svg>Empresas</button>
+      <button data-v="variaciones"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Análisis de variaciones</button>
+      <button data-v="bitacora"><svg viewBox="0 0 24 24"><path d="M12 7v5l3 2M21 12a9 9 0 1 1-9-9 9 9 0 0 1 9 9z"/></svg>Registro de actividades</button>
+      <button data-v="cuenta"><svg viewBox="0 0 24 24"><path d="M20 21a8 8 0 0 0-16 0M12 13a4 4 0 1 0-4-4 4 4 0 0 0 4 4z"/></svg>Mi cuenta</button>
+    </nav>
+    <div class="cuenta">
+      <b id="lblNombre"></b><span id="lblUsuario"></span>
+      <button class="salir" id="btnSalir"><svg viewBox="0 0 24 24"><path d="M15 17l5-5-5-5M20 12H9M12 21H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h7"/></svg>Cerrar sesión</button>
+    </div>
+  </aside>
 
   <main>
+    <!-- Inicio -->
+    <section id="v-inicio" class="vista">
+      <h2 id="saludo">Bienvenido</h2>
+      <p class="desc">Resumen de su información.</p>
+      <div class="cifras">
+        <div class="cifra"><span>Empresas registradas</span><b id="nEmpresas">0</b></div>
+        <div class="cifra"><span>Análisis de variaciones</span><b id="nAnalisis">0</b></div>
+        <div class="cifra"><span>Actividades registradas</span><b id="nActividades">0</b></div>
+      </div>
+      <p class="desc">Use la barra lateral para ir a cada módulo.</p>
+    </section>
+
     <!-- Empresas -->
-    <section id="v-empresas" class="vista">
+    <section id="v-empresas" class="vista oculto">
       <h2>Empresas</h2>
-      <form id="formEmpresa" class="fila solo-editor">
+      <p class="desc">Crear, editar y eliminar empresas con sus datos tributarios.</p>
+      <form id="formEmpresa" class="fila">
         <input type="hidden" name="id">
         <input name="nit" placeholder="NIT" required>
         <input name="razon_social" placeholder="Razón social" required>
@@ -111,6 +172,7 @@
         <input name="direccion" placeholder="Dirección">
         <input name="telefono" placeholder="Teléfono">
         <button>Guardar</button>
+        <button type="button" class="sec oculto" id="btnCancelarEmpresa">Cancelar</button>
       </form>
       <div class="tabla"><table>
         <thead><tr><th>NIT</th><th>Razón social</th><th>Régimen</th><th>Teléfono</th><th></th></tr></thead>
@@ -121,6 +183,7 @@
     <!-- Variaciones -->
     <section id="v-variaciones" class="vista oculto">
       <h2>Análisis de variaciones</h2>
+      <p class="desc">Variaciones de materiales, mano de obra y CIF. Positivo = desfavorable, negativo = favorable.</p>
       <form id="formVar" class="rejilla">
         <fieldset><legend>Materiales</legend>
           <label>Precio estándar <input name="precio_std" type="number" step="any" required></label>
@@ -146,136 +209,156 @@
       <div id="resultadoVar"></div>
     </section>
 
-    <!-- Usuarios -->
-    <section id="v-usuarios" class="vista oculto">
-      <h2>Usuarios</h2>
-      <form id="formUsuario" class="fila">
-        <input name="usuario" placeholder="Usuario" required>
-        <input name="nombre" placeholder="Nombre completo" required>
-        <input name="password" type="password" placeholder="Contraseña" required>
-        <select name="rol"><option>Administrador</option><option selected>Usuario</option><option>Estudiante</option></select>
-        <button>Crear usuario</button>
-      </form>
-      <p id="errorUsuario" class="error"></p>
-      <div class="tabla"><table>
-        <thead><tr><th>Usuario</th><th>Nombre</th><th>Rol</th><th>Estado</th><th></th></tr></thead>
-        <tbody id="tablaUsuarios"></tbody>
-      </table></div>
-    </section>
-
     <!-- Bitácora -->
     <section id="v-bitacora" class="vista oculto">
       <h2>Registro de actividades</h2>
+      <p class="desc">Acciones importantes realizadas con su cuenta.</p>
       <div class="tabla"><table>
-        <thead><tr><th>Fecha</th><th>Usuario</th><th>Acción</th><th>Detalle</th></tr></thead>
+        <thead><tr><th>Fecha</th><th>Acción</th><th>Detalle</th></tr></thead>
         <tbody id="tablaBitacora"></tbody>
       </table></div>
     </section>
+
+    <!-- Mi cuenta -->
+    <section id="v-cuenta" class="vista oculto">
+      <h2>Mi cuenta</h2>
+      <p class="desc">Datos de su usuario.</p>
+      <form id="formCuenta" class="rejilla" style="max-width:640px">
+        <fieldset><legend>Datos</legend>
+          <label>Nombre completo <input name="nombre" required></label>
+          <label>Usuario <input name="usuario" disabled></label>
+        </fieldset>
+        <fieldset><legend>Cambiar contraseña</legend>
+          <label>Contraseña actual <input name="actual" type="password"></label>
+          <label>Nueva contraseña <input name="nueva" type="password" minlength="4"></label>
+        </fieldset>
+        <div><button>Guardar cambios</button><p class="error" id="errCuenta"></p></div>
+      </form>
+    </section>
   </main>
-</section>
+</div>
 
 <script>
 // ================= Almacenamiento (en el navegador) =================
-const CLAVE = 'sistema-costos-v1';
+const CLAVE = 'sistema-costos-v2';
 let memoria = null;
-function leer() {
-  try { const t = localStorage.getItem(CLAVE); if (t) return JSON.parse(t); } catch (e) {}
-  return memoria;
-}
-function escribir(d) {
-  memoria = d;
-  try { localStorage.setItem(CLAVE, JSON.stringify(d)); } catch (e) {}
-}
-function hash(t) { // resumen simple de contraseña (demostración)
-  let h = 5381; for (const c of 'costos::' + t) h = ((h << 5) + h + c.charCodeAt(0)) >>> 0;
-  return h.toString(16);
-}
-let DB = leer();
-if (!DB) {
-  DB = { sigId: 2, usuarios: [{ id: 1, usuario: 'admin', pass: hash('admin123'), nombre: 'Administrador', rol: 'Administrador', activo: true }],
-         empresas: [], bitacora: [] };
-  escribir(DB);
-}
-const nuevoId = () => DB.sigId++;
+function leer() { try { const t = localStorage.getItem(CLAVE); if (t) return JSON.parse(t); } catch (e) {} return memoria; }
+function escribir(d) { memoria = d; try { localStorage.setItem(CLAVE, JSON.stringify(d)); } catch (e) {} }
+function hash(t) { let h = 5381; for (const c of 'costos::' + t) h = ((h << 5) + h + c.charCodeAt(0)) >>> 0; return h.toString(16); }
+
+let DB = leer() || { sigId: 1, usuarios: [], datos: {} };
 const guardar = () => escribir(DB);
+const nuevoId = () => DB.sigId++;
 
-let sesion = null;
-try { sesion = JSON.parse(sessionStorage.getItem('sesion-costos')); } catch (e) {}
-function guardarSesion() { try { sesion ? sessionStorage.setItem('sesion-costos', JSON.stringify(sesion)) : sessionStorage.removeItem('sesion-costos'); } catch (e) {} }
+let sesion = null;   // usuario que entró
+let MIS = null;      // datos de ese usuario
+try { const id = Number(sessionStorage.getItem('sesion-costos')); if (id) sesion = DB.usuarios.find(u => u.id === id) || null; } catch (e) {}
 
+function datosDe(u) { DB.datos[u.id] ||= { empresas: [], bitacora: [], analisis: 0 }; return DB.datos[u.id]; }
 function registrar(accion, detalle = '') {
-  DB.bitacora.unshift({ fecha: new Date().toLocaleString('es-CO'), usuario: sesion ? sesion.usuario : '', accion, detalle });
-  DB.bitacora = DB.bitacora.slice(0, 300);
-  guardar();
+  if (!MIS) return;
+  MIS.bitacora.unshift({ fecha: new Date().toLocaleString('es-CO'), accion, detalle });
+  MIS.bitacora = MIS.bitacora.slice(0, 300); guardar();
 }
 
 // ================= Utilidades =================
 const $ = (s) => document.querySelector(s);
 const esc = (t) => String(t ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const pesos = (v) => Number(v).toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 2 });
-const esAdmin = () => sesion && sesion.rol === 'Administrador';
-const puedeEditar = () => sesion && sesion.rol !== 'Estudiante';
 
-// ================= Inicio / cierre de sesión =================
-$('#formLogin').onsubmit = (e) => {
+// ================= Acceso =================
+function pestana(crear) {
+  $('#tabCrear').classList.toggle('activa', crear); $('#tabEntrar').classList.toggle('activa', !crear);
+  $('#formCrear').classList.toggle('oculto', !crear); $('#formEntrar').classList.toggle('oculto', crear);
+  $('#errEntrar').textContent = $('#errCrear').textContent = '';
+}
+$('#tabEntrar').onclick = () => pestana(false);
+$('#tabCrear').onclick = () => pestana(true);
+
+$('#formCrear').onsubmit = (e) => {
+  e.preventDefault();
+  const d = Object.fromEntries(new FormData(e.target)); const usuario = d.usuario.trim().toLowerCase();
+  if (d.password !== d.password2) { $('#errCrear').textContent = 'Las contraseñas no coinciden'; return; }
+  if (DB.usuarios.some(u => u.usuario === usuario)) { $('#errCrear').textContent = 'Ese usuario ya existe, elija otro'; return; }
+  const u = { id: nuevoId(), usuario, nombre: d.nombre.trim(), pass: hash(d.password), creado: new Date().toISOString() };
+  DB.usuarios.push(u); guardar();
+  e.target.reset(); entrar(u, 'Cuenta creada');
+};
+
+$('#formEntrar').onsubmit = (e) => {
   e.preventDefault();
   const d = Object.fromEntries(new FormData(e.target));
-  const u = DB.usuarios.find(x => x.usuario === d.usuario.trim() && x.activo);
-  if (!u || u.pass !== hash(d.password)) { $('#errorLogin').textContent = 'Usuario o contraseña incorrectos'; return; }
-  sesion = { id: u.id, usuario: u.usuario, nombre: u.nombre, rol: u.rol };
-  guardarSesion(); registrar('Inicio de sesión', u.usuario);
-  e.target.reset(); $('#errorLogin').textContent = '';
-  mostrarPanel();
+  const u = DB.usuarios.find(x => x.usuario === d.usuario.trim().toLowerCase());
+  if (!u || u.pass !== hash(d.password)) { $('#errEntrar').textContent = 'Usuario o contraseña incorrectos'; return; }
+  e.target.reset(); entrar(u, 'Inicio de sesión');
 };
-$('#btnSalir').onclick = () => { registrar('Cierre de sesión'); sesion = null; guardarSesion(); mostrarLogin(); };
 
-function mostrarLogin() { $('#panel').classList.add('oculto'); $('#login').classList.remove('oculto'); }
-function mostrarPanel() {
-  $('#login').classList.add('oculto'); $('#panel').classList.remove('oculto');
-  $('#lblUsuario').textContent = `${sesion.nombre} (${sesion.rol})`;
-  document.querySelectorAll('.solo-admin').forEach(x => x.classList.toggle('oculto', !esAdmin()));
-  document.querySelectorAll('.solo-editor').forEach(x => x.classList.toggle('oculto', !puedeEditar()));
-  irA('empresas');
+function entrar(u, accion) {
+  sesion = u; MIS = datosDe(u);
+  try { sessionStorage.setItem('sesion-costos', u.id); } catch (e) {}
+  if (accion) registrar(accion, u.usuario);
+  $('#acceso').classList.add('oculto'); $('#app').classList.remove('oculto');
+  $('#lblNombre').textContent = u.nombre; $('#lblUsuario').textContent = '@' + u.usuario;
+  irA('inicio');
 }
+$('#btnSalir').onclick = () => {
+  registrar('Cierre de sesión'); sesion = MIS = null;
+  try { sessionStorage.removeItem('sesion-costos'); } catch (e) {}
+  $('#app').classList.add('oculto'); $('#acceso').classList.remove('oculto'); pestana(false);
+};
 
-// ================= Navegación =================
+// ================= Barra lateral =================
 function irA(v) {
   document.querySelectorAll('.vista').forEach(x => x.classList.add('oculto'));
   $('#v-' + v).classList.remove('oculto');
   document.querySelectorAll('#menu button').forEach(b => b.classList.toggle('activo', b.dataset.v === v));
-  ({ empresas: pintarEmpresas, usuarios: pintarUsuarios, bitacora: pintarBitacora }[v] || (() => {}))();
+  $('#lateral').classList.remove('abierto');
+  ({ inicio: pintarInicio, empresas: pintarEmpresas, bitacora: pintarBitacora, cuenta: pintarCuenta }[v] || (() => {}))();
+  window.scrollTo(0, 0);
 }
 document.querySelectorAll('#menu button').forEach(b => b.onclick = () => irA(b.dataset.v));
+$('#btnMenu').onclick = () => $('#lateral').classList.add('abierto');
+$('#lateral').addEventListener('click', (e) => { if (e.target === $('#lateral')) $('#lateral').classList.remove('abierto'); });
+
+// ================= Inicio =================
+function pintarInicio() {
+  $('#saludo').textContent = `Bienvenido, ${sesion.nombre.split(' ')[0]}`;
+  $('#nEmpresas').textContent = MIS.empresas.length;
+  $('#nAnalisis').textContent = MIS.analisis || 0;
+  $('#nActividades').textContent = MIS.bitacora.length;
+}
 
 // ================= Empresas =================
 function pintarEmpresas() {
-  const filas = DB.empresas.map(e => `<tr>
+  $('#tablaEmpresas').innerHTML = MIS.empresas.map(e => `<tr>
     <td>${esc(e.nit)}</td><td>${esc(e.razon_social)}</td><td>${esc(e.regimen_tributario)}</td><td>${esc(e.telefono)}</td>
-    <td>${puedeEditar() ? `<button class="sec" data-editar="${e.id}">Editar</button>` : ''}
-        ${esAdmin() ? `<button class="peligro" data-eliminar="${e.id}">Eliminar</button>` : ''}</td></tr>`).join('');
-  $('#tablaEmpresas').innerHTML = filas || '<tr><td colspan="5">No hay empresas registradas.</td></tr>';
+    <td><button class="sec" data-editar="${e.id}">Editar</button> <button class="peligro" data-eliminar="${e.id}">Eliminar</button></td></tr>`).join('')
+    || '<tr><td colspan="5">Aún no hay empresas. Registre la primera con el formulario.</td></tr>';
 }
+function limpiarEmpresa() { const f = $('#formEmpresa'); f.reset(); f.elements.id.value = ''; $('#btnCancelarEmpresa').classList.add('oculto'); }
+$('#btnCancelarEmpresa').onclick = limpiarEmpresa;
 $('#tablaEmpresas').onclick = (ev) => {
   const ed = ev.target.dataset.editar, el = ev.target.dataset.eliminar;
   if (ed) {
-    const e = DB.empresas.find(x => x.id == ed), f = $('#formEmpresa');
+    const e = MIS.empresas.find(x => x.id == ed), f = $('#formEmpresa');
     for (const k of ['id', 'nit', 'razon_social', 'regimen_tributario', 'direccion', 'telefono']) f.elements[k].value = e[k] || '';
+    $('#btnCancelarEmpresa').classList.remove('oculto'); f.elements.nit.focus();
   }
   if (el && confirm('¿Eliminar esta empresa?')) {
-    const e = DB.empresas.find(x => x.id == el);
-    DB.empresas = DB.empresas.filter(x => x.id != el); registrar('Eliminar empresa', e.razon_social); pintarEmpresas();
+    const e = MIS.empresas.find(x => x.id == el);
+    MIS.empresas = MIS.empresas.filter(x => x.id != el); registrar('Eliminar empresa', e.razon_social); pintarEmpresas();
   }
 };
 $('#formEmpresa').onsubmit = (ev) => {
   ev.preventDefault();
   const d = Object.fromEntries(new FormData(ev.target));
-  if (DB.empresas.some(x => x.nit === d.nit && x.id != d.id)) { alert('Ya existe una empresa con ese NIT'); return; }
-  if (d.id) { Object.assign(DB.empresas.find(x => x.id == d.id), d, { id: Number(d.id) }); registrar('Editar empresa', d.razon_social); }
-  else { DB.empresas.push({ ...d, id: nuevoId() }); registrar('Crear empresa', d.razon_social); }
-  ev.target.reset(); ev.target.elements.id.value = ''; pintarEmpresas();
+  if (MIS.empresas.some(x => x.nit === d.nit && x.id != d.id)) { alert('Ya existe una empresa con ese NIT'); return; }
+  if (d.id) { Object.assign(MIS.empresas.find(x => x.id == d.id), d, { id: Number(d.id) }); registrar('Editar empresa', d.razon_social); }
+  else { MIS.empresas.push({ ...d, id: nuevoId() }); registrar('Crear empresa', d.razon_social); }
+  limpiarEmpresa(); pintarEmpresas();
 };
 
-// ================= Variaciones (mismas fórmulas que el backend) =================
+// ================= Variaciones =================
 function tipo(v) { return v < 0 ? 'Favorable' : v > 0 ? 'Desfavorable' : 'Sin variación'; }
 $('#formVar').onsubmit = (ev) => {
   ev.preventDefault();
@@ -300,7 +383,8 @@ $('#formVar').onsubmit = (ev) => {
     <div class="tabla"><table><thead><tr><th>Variación</th><th style="text-align:right">Valor</th><th>Tipo</th></tr></thead><tbody>
       ${items.map(([n, v]) => fila(n, v)).join('')}${fila('Variación total', total, true)}
     </tbody></table></div>`;
-  registrar('Calcular variaciones', `Total ${pesos(total)} (${tipo(total)})`);
+  MIS.analisis = (MIS.analisis || 0) + 1;
+  registrar('Calcular variaciones', `Total ${pesos(Math.abs(total))} (${tipo(total)})`);
 };
 $('#btnEjemplo').onclick = () => {
   const ej = { precio_std: 5000, precio_real: 5200, cantidad_std_permitida: 1000, cantidad_real: 980,
@@ -309,40 +393,33 @@ $('#btnEjemplo').onclick = () => {
   const f = $('#formVar'); for (const k in ej) f.elements[k].value = ej[k];
 };
 
-// ================= Usuarios (solo administrador) =================
-function pintarUsuarios() {
-  $('#tablaUsuarios').innerHTML = DB.usuarios.map(u => `<tr>
-    <td>${esc(u.usuario)}</td><td>${esc(u.nombre)}</td><td>${esc(u.rol)}</td><td>${u.activo ? 'Activo' : 'Inactivo'}</td>
-    <td>${u.id !== sesion.id ? `<button class="sec" data-estado="${u.id}">${u.activo ? 'Desactivar' : 'Activar'}</button>` : ''}</td></tr>`).join('');
-}
-$('#tablaUsuarios').onclick = (ev) => {
-  const id = ev.target.dataset.estado; if (!id) return;
-  const u = DB.usuarios.find(x => x.id == id); u.activo = !u.activo;
-  registrar(u.activo ? 'Activar usuario' : 'Desactivar usuario', u.usuario); pintarUsuarios();
-};
-$('#formUsuario').onsubmit = (ev) => {
-  ev.preventDefault();
-  const d = Object.fromEntries(new FormData(ev.target));
-  if (DB.usuarios.some(x => x.usuario === d.usuario.trim())) { $('#errorUsuario').textContent = 'Ese usuario ya existe'; return; }
-  DB.usuarios.push({ id: nuevoId(), usuario: d.usuario.trim(), nombre: d.nombre, pass: hash(d.password), rol: d.rol, activo: true });
-  registrar('Crear usuario', `${d.usuario} (${d.rol})`);
-  $('#errorUsuario').textContent = ''; ev.target.reset(); pintarUsuarios();
-};
-
 // ================= Bitácora =================
 function pintarBitacora() {
-  $('#tablaBitacora').innerHTML = DB.bitacora.map(b =>
-    `<tr><td>${esc(b.fecha)}</td><td>${esc(b.usuario)}</td><td>${esc(b.accion)}</td><td>${esc(b.detalle)}</td></tr>`).join('')
-    || '<tr><td colspan="4">Sin actividades.</td></tr>';
+  $('#tablaBitacora').innerHTML = MIS.bitacora.map(b =>
+    `<tr><td>${esc(b.fecha)}</td><td>${esc(b.accion)}</td><td>${esc(b.detalle)}</td></tr>`).join('')
+    || '<tr><td colspan="3">Sin actividades.</td></tr>';
 }
 
-// ================= Arranque (acceso directo, sin inicio de sesión) =================
-const admin = DB.usuarios.find(u => u.rol === 'Administrador') || DB.usuarios[0];
-sesion = { id: admin.id, usuario: admin.usuario, nombre: admin.nombre, rol: admin.rol };
-$('#btnSalir').classList.add('oculto');
-mostrarPanel();
-$('#lblUsuario').textContent = '';
-document.querySelectorAll('[data-v=usuarios]').forEach(x => x.classList.add('oculto'));
+// ================= Mi cuenta =================
+function pintarCuenta() {
+  const f = $('#formCuenta'); f.reset(); $('#errCuenta').textContent = '';
+  f.elements.nombre.value = sesion.nombre; f.elements.usuario.value = sesion.usuario;
+}
+$('#formCuenta').onsubmit = (ev) => {
+  ev.preventDefault();
+  const d = Object.fromEntries(new FormData(ev.target));
+  if (d.nueva) {
+    if (sesion.pass !== hash(d.actual)) { $('#errCuenta').textContent = 'La contraseña actual no es correcta'; return; }
+    sesion.pass = hash(d.nueva); registrar('Cambiar contraseña');
+  }
+  sesion.nombre = d.nombre.trim(); $('#lblNombre').textContent = sesion.nombre;
+  guardar(); registrar('Actualizar datos de cuenta');
+  $('#errCuenta').style.color = 'var(--fav)'; $('#errCuenta').textContent = 'Cambios guardados';
+  setTimeout(() => { $('#errCuenta').style.color = ''; }, 2500);
+};
+
+// ================= Arranque =================
+if (sesion) entrar(sesion); else pestana(DB.usuarios.length === 0);
 </script>
 </body>
 </html>
