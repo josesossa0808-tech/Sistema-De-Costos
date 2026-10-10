@@ -1,0 +1,25 @@
+SISTEMA DE COSTOS ESTANDAR - INSTALACION
+=========================================
+
+REQUISITO (solo una vez por computador)
+  Instalar MySQL Server 8:
+  https://dev.mysql.com/downloads/installer/
+  Durante la instalacion se crea una contrasena para el usuario "root". Anotela.
+
+USAR EL SISTEMA
+  1. Doble clic en SistemaCostos.exe
+  2. La primera vez le pide la contrasena de MySQL (la de root). Escribala y Enter.
+     (Mientras escribe no se ven los caracteres; es normal.)
+  3. El programa crea la base de datos solo y abre el navegador.
+  4. Entre con:  usuario: admin   contrasena: admin123
+
+  IMPORTANTE: no cierre la ventana negra mientras usa el sistema.
+  Para salir, cierre el navegador y luego la ventana negra.
+
+SI WINDOWS MUESTRA "Windows protegio su PC"
+  Toque "Mas informacion" y luego "Ejecutar de todas formas".
+  Aparece porque el programa no esta firmado digitalmente; es normal en proyectos academicos.
+
+CONFIGURACION
+  Los parametros del sistema estan en config\config.ini
+  (servidor MySQL, puerto, nombre de la base de datos, usuario inicial).

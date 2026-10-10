@@ -1,32 +1,103 @@
 """
 Sistema de Costos Estándar - API (backend)
 Ejecutar:  python app.py   (desde la carpeta backend)
+       o:  SistemaCostos.exe (versión instalable)
 """
 import configparser
+import getpass
 import os
+import secrets
+import shutil
+import sys
+import threading
+import webbrowser
 from functools import wraps
 
 import mysql.connector
+from mysql.connector import errorcode
 from flask import Flask, jsonify, request, send_from_directory, session
 from werkzeug.security import check_password_hash, generate_password_hash
 
-BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-FRONTEND = os.path.join(BASE, "frontend")
+# ---------- Rutas (funciona igual con python app.py o con el .exe) ----------
+if getattr(sys, "frozen", False):
+    # Dentro del .exe: los recursos vienen empacados; la configuración queda junto al .exe
+    RECURSOS = sys._MEIPASS
+    APP_DIR = os.path.dirname(sys.executable)
+else:
+    RECURSOS = APP_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+FRONTEND = os.path.join(RECURSOS, "frontend")
+SCHEMA = os.path.join(RECURSOS, "database", "schema.sql")
+CONFIG = os.path.join(APP_DIR, "config", "config.ini")
+
+if not os.path.exists(CONFIG):
+    # Primera ejecución del .exe: copia la configuración por defecto junto al programa
+    os.makedirs(os.path.dirname(CONFIG), exist_ok=True)
+    shutil.copy(os.path.join(RECURSOS, "config", "config.ini"), CONFIG)
 
 cfg = configparser.ConfigParser()
-cfg.read(os.path.join(BASE, "config", "config.ini"), encoding="utf-8")
+cfg.read(CONFIG, encoding="utf-8")
+
+
+def guardar_config():
+    with open(CONFIG, "w", encoding="utf-8") as f:
+        cfg.write(f)
+
+
+if cfg["server"]["secret_key"] in ("", "cambie-esta-clave-secreta"):
+    cfg["server"]["secret_key"] = secrets.token_hex(24)
+    guardar_config()
 
 app = Flask(__name__, static_folder=FRONTEND, static_url_path="")
 app.secret_key = cfg["server"]["secret_key"]
 
 
 # ---------- Base de datos ----------
-def db():
+def conectar(con_base=True):
     d = cfg["database"]
     return mysql.connector.connect(
-        host=d["host"], port=int(d["port"]), user=d["user"],
-        password=d["password"], database=d["name"],
+        host=d["host"], port=int(d["port"]), user=d["user"], password=d["password"],
+        database=d["name"] if con_base else None, use_pure=True,
     )
+
+
+def db():
+    return conectar()
+
+
+def preparar_base_de_datos():
+    """Conecta a MySQL (pide la contraseña si hace falta) y crea las tablas si no existen."""
+    while True:
+        try:
+            con = conectar(con_base=False)
+            break
+        except mysql.connector.Error as e:
+            if e.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+                print("\nNo se pudo entrar a MySQL con la contraseña guardada.")
+                cfg["database"]["password"] = getpass.getpass(
+                    f"Escriba la contraseña del usuario '{cfg['database']['user']}' de MySQL: ")
+                continue
+            print("\nERROR: no se pudo conectar a MySQL.")
+            print("Verifique que MySQL Server esté instalado y encendido.")
+            print("Detalle:", e)
+            input("\nPresione Enter para cerrar...")
+            sys.exit(1)
+    guardar_config()
+
+    nombre = cfg["database"]["name"]
+    cur = con.cursor()
+    cur.execute(f"CREATE DATABASE IF NOT EXISTS `{nombre}` "
+                "CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
+    cur.execute(f"USE `{nombre}`")
+    with open(SCHEMA, encoding="utf-8") as f:
+        lineas = [l for l in f if not l.strip().startswith("--")]
+    for sentencia in "".join(lineas).split(";"):
+        s = sentencia.strip()
+        if s and not s.upper().startswith(("CREATE DATABASE", "USE ")):
+            cur.execute(s)
+    con.commit()
+    cur.close()
+    con.close()
 
 
 def consulta(sql, params=(), uno=False, escribir=False):
@@ -210,7 +281,16 @@ def calcular_variaciones():
 
 
 if __name__ == "__main__":
+    print("=" * 56)
+    print("  SISTEMA DE COSTOS ESTÁNDAR")
+    print("=" * 56)
+    print("Preparando la base de datos...")
+    preparar_base_de_datos()
     crear_admin_inicial()
     s = cfg["server"]
-    print(f"\nSistema iniciado. Abra en su navegador: http://{s['host']}:{s['port']}\n")
+    url = f"http://{s['host']}:{s['port']}"
+    print(f"\nSistema iniciado en: {url}")
+    print(f"Usuario inicial: {cfg['admin_inicial']['usuario']} / {cfg['admin_inicial']['password']}")
+    print("\nNO CIERRE ESTA VENTANA mientras usa el sistema.\n")
+    threading.Timer(1.5, lambda: webbrowser.open(url)).start()
     app.run(host=s["host"], port=int(s["port"]))

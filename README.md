@@ -15,18 +15,26 @@ sistema-costos/
 ├── frontend/       Pantallas (index.html = inicio de sesión)
 ├── database/       Script de creación de la base de datos
 ├── config/         Parámetros del sistema
-├── docs/           Manual técnico
-└── iniciar.bat     Arranque en Windows
+├── docs/           Manual técnico e instrucciones de instalación
+├── .github/        Construcción automática del .exe
+└── iniciar.bat     Arranque desde el código
 ```
 
-## Instalación
-1. Instalar **Python 3.10+** (marcar "Add Python to PATH"): https://www.python.org
-2. Instalar **MySQL Server 8** y MySQL Workbench.
-3. En MySQL Workbench abrir y ejecutar `database/schema.sql`.
-4. Abrir `config/config.ini` y poner la contraseña de MySQL en `password`.
-5. Doble clic en **`iniciar.bat`**. Se abre el navegador en http://127.0.0.1:5000
+## ⬇️ Descargar e instalar (cualquier computador con Windows)
+1. Instalar **MySQL Server 8** (una sola vez): https://dev.mysql.com/downloads/installer/ — anote la contraseña de `root`.
+2. Ir a **[Releases](../../releases/latest)** y descargar **SistemaCostos-Windows.zip**.
+3. Clic derecho → **Extraer todo**.
+4. Doble clic en **SistemaCostos.exe**. La primera vez pide la contraseña de MySQL y crea la base de datos automáticamente.
+5. Se abre el navegador. Entrar con **`admin` / `admin123`**.
 
-**Usuario inicial:** `admin` / `admin123` (cámbielo en `config.ini` antes del primer arranque).
+No necesita instalar Python. No cierre la ventana negra mientras usa el sistema.
+Si Windows muestra *"Windows protegió su PC"*: **Más información → Ejecutar de todas formas**.
+
+## Ejecutar desde el código (desarrolladores)
+1. Instalar **Python 3.10+** (marcar "Add Python to PATH") y **MySQL Server 8**.
+2. Doble clic en **`iniciar.bat`** (instala dependencias, crea la base de datos y abre el navegador).
+
+El instalable `.exe` se construye solo con GitHub Actions (`.github/workflows/construir-exe.yml`) cada vez que se suben cambios.
 
 ## Roles
 | Rol | Permisos |
@@ -41,4 +49,4 @@ sistema-costos/
 - [x] Cálculo de variaciones (materiales, MOD, CIF presupuesto y volumen)
 - [x] Base de datos completa de todos los módulos
 - [ ] Pantallas: materias primas, mano de obra, CIF, producción, hoja de costos
-- [ ] Instalador .exe
+- [x] Instalable .exe (crea la base de datos automáticamente)
