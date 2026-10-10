@@ -1,0 +1,31 @@
+* { box-sizing: border-box; }
+body { margin: 0; font-family: Segoe UI, Arial, sans-serif; background: #f3f5f8; color: #1d2733; }
+button { background: #1f5fae; color: #fff; border: 0; padding: 8px 14px; border-radius: 6px; cursor: pointer; }
+button.sec { background: #e3e8ef; color: #1d2733; }
+button.peligro { background: #c0392b; }
+input { padding: 8px; border: 1px solid #c9d1dc; border-radius: 6px; width: 100%; }
+label { display: block; font-size: 14px; margin-bottom: 10px; }
+.error { color: #c0392b; }
+.oculto { display: none; }
+
+/* Login */
+.login { display: grid; place-items: center; min-height: 100vh; }
+.tarjeta { background: #fff; padding: 32px; border-radius: 12px; width: 340px; box-shadow: 0 4px 20px rgba(0,0,0,.08); }
+.tarjeta h1 { font-size: 20px; margin: 0 0 4px; }
+.sub { color: #667; margin-top: 0; }
+.tarjeta button { width: 100%; margin-top: 8px; }
+
+/* Panel */
+header { display: flex; gap: 16px; align-items: center; padding: 12px 20px; background: #1d2733; color: #fff; }
+header span { margin-left: auto; }
+nav { display: flex; gap: 8px; padding: 12px 20px; background: #fff; border-bottom: 1px solid #dde3ea; }
+nav button { background: transparent; color: #1f5fae; }
+main { padding: 20px; }
+.fila { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.fila input { width: auto; flex: 1 1 150px; }
+.rejilla { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; align-items: start; }
+fieldset { background: #fff; border: 1px solid #dde3ea; border-radius: 8px; }
+table { width: 100%; border-collapse: collapse; background: #fff; margin-top: 12px; }
+th, td { padding: 8px 10px; border-bottom: 1px solid #e6eaf0; text-align: left; }
+tr.fav td:last-child { color: #1e8449; font-weight: 600; }
+tr.desf td:last-child { color: #c0392b; font-weight: 600; }

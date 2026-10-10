@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sistema de Costos Estándar - Iniciar sesión</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body class="login">
+  <form id="formLogin" class="tarjeta">
+    <h1>Sistema de Costos Estándar</h1>
+    <p class="sub">Ingrese sus credenciales</p>
+    <label>Usuario <input name="usuario" required autofocus></label>
+    <label>Contraseña <input name="password" type="password" required></label>
+    <button type="submit">Iniciar sesión</button>
+    <p id="error" class="error"></p>
+  </form>
+
+  <script src="js/api.js"></script>
+  <script>
+    document.getElementById('formLogin').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const datos = Object.fromEntries(new FormData(e.target));
+      try {
+        await api('/api/login', 'POST', datos);
+        location.href = 'panel.html';
+      } catch (err) {
+        document.getElementById('error').textContent = err.message;
+      }
+    });
+  </script>
+</body>
+</html>
