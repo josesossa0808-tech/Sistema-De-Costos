@@ -6,6 +6,10 @@
   <title>Kosto · Ingreso</title>
   <link rel="icon" href="img/icono.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/estilos.css">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#102a63">
+  <link rel="apple-touch-icon" href="img/icono-192.png">
+
 </head>
 <body class="pagina-login">
 <main class="login-fondo">
@@ -43,12 +47,22 @@
       <button class="login-boton" type="submit">Crear cuenta</button>
     </form>
 
-    <p class="login-nota">Versión web: funciona en Google Chrome sin instalar nada. Los datos se guardan en este navegador.</p>
+    <button type="button" id="btn-instalar" class="login-boton" style="display:none;margin-top:12px;background:#0a1a3f">⬇ Instalar Kosto como aplicación</button>
+    <p class="login-nota">Versión web: funciona en Google Chrome. Puedes instalarla como aplicación con el botón de arriba o el ícono de instalar en la barra de direcciones. Los datos se guardan en este equipo.</p>
     <p class="login-nota" id="nota-roles">Las cuentas nuevas quedan con rol Usuario. El administrador puede cambiar los roles.</p>
   </section>
 </main>
 <script src="js/kosto-web.js?v=2"></script>
 <script src="js/api.js"></script>
 <script src="js/login.js"></script>
+<script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(function () {});</script>
+<script>
+(function () {
+  var evento = null, btn = document.getElementById("btn-instalar");
+  window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); evento = e; btn.style.display = "block"; });
+  btn.addEventListener("click", async function () { if (!evento) return; evento.prompt(); await evento.userChoice; evento = null; btn.style.display = "none"; });
+  window.addEventListener("appinstalled", function () { btn.style.display = "none"; });
+})();
+</script>
 </body>
 </html>

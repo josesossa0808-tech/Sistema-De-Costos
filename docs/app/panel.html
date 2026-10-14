@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Kosto - Panel</title>
   <link rel="stylesheet" href="css/estilos.css">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#102a63">
+  <link rel="apple-touch-icon" href="img/icono-192.png">
+
 </head>
 <body>
   <header>
@@ -75,5 +79,6 @@
   <script src="js/kosto-web.js?v=2"></script>
 <script src="js/api.js"></script>
   <script src="js/panel.js"></script>
+<script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(function () {});</script>
 </body>
 </html>

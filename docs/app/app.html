@@ -6,6 +6,10 @@
   <title>Kosto</title>
   <link rel="icon" href="img/icono.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/estilos.css">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#102a63">
+  <link rel="apple-touch-icon" href="img/icono-192.png">
+
 </head>
 <body>
 <div class="app">
@@ -50,5 +54,6 @@
 <script src="js/modulos/seguridad.js"></script>
 <script src="js/modulos/ayuda.js"></script>
 <script>App.iniciar();</script>
+<script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(function () {});</script>
 </body>
 </html>
