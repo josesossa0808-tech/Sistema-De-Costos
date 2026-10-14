@@ -33,7 +33,7 @@ Name: "escritorio"; Description: "Crear acceso directo en el escritorio"; GroupD
 Source: "..\dist\Kosto\*"; DestDir: "{app}"; Excludes: "\config\*,\docs\*,\database\*"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; La configuración no se sobrescribe al actualizar
 Source: "..\config\config.ini"; DestDir: "{app}\config"; Flags: onlyifdoesntexist uninsneveruninstall
-; Base de datos con los datos de Deligaby (no se sobrescribe al actualizar)
+; Base de datos vacía, sin datos precargados (no se sobrescribe al actualizar)
 Source: "..\database\sistema_costos.db"; DestDir: "{app}\database"; Flags: onlyifdoesntexist uninsneveruninstall
 Source: "..\docs\*"; DestDir: "{app}\docs"; Flags: ignoreversion recursesubdirs
 
@@ -55,4 +55,4 @@ Name: "{autodesktop}\{#Nombre}"; Filename: "{app}\Kosto.exe"; WorkingDir: "{app}
 Filename: "{app}\Kosto.exe"; Description: "Iniciar {#Nombre}"; Flags: postinstall nowait skipifsilent
 
 [Messages]
-es.WelcomeLabel2=Este asistente instalará [name/ver] en su equipo.%n%nNo requiere instalar nada más: incluye la base de datos con la información de la empresa Deligaby. Usuario: admin  Contraseña: Admin123*
+es.WelcomeLabel2=Este asistente instalará [name/ver] en su equipo.%n%nNo requiere instalar nada más: incluye la base de datos lista para registrar su empresa. Usuario: admin  Contraseña: Admin123*
