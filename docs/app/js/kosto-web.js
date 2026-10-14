@@ -73,9 +73,9 @@
     py.FS.mount(py.FS.filesystems.IDBFS, {}, "/kosto/datos");
     await sincronizar(true);
     var existe = true;
-    try { py.FS.stat("/kosto/datos/sistema_costos.db"); } catch (e) { existe = false; }
+    try { py.FS.stat("/kosto/datos/kosto.db"); } catch (e) { existe = false; }
     if (!existe) {
-      py.FS.writeFile("/kosto/datos/sistema_costos.db", py.FS.readFile("/kosto/database/sistema_costos.db"));
+      py.FS.writeFile("/kosto/datos/kosto.db", py.FS.readFile("/kosto/database/kosto_vacia.db"));
       await sincronizar(false);
     }
 
