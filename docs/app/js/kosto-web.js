@@ -51,9 +51,9 @@
     py = await loadPyodide({ indexURL: PYODIDE });
 
     paso("Cargando componentes…");
-    await py.loadPackage(["micropip", "sqlite3", "hashlib", "openpyxl"]);
+    await py.loadPackage(["micropip", "sqlite3", "hashlib", "ssl"]);
     var micropip = py.pyimport("micropip");
-    await micropip.install("flask");
+    await micropip.install(["flask", "openpyxl"]);
     try { await micropip.install("reportlab"); } catch (e) { console.warn("PDF no disponible en la versión web", e); }
 
     paso("Cargando el sistema…");
