@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kosto - Panel</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <header>
+    <strong>Kosto</strong>
+    <span id="usuario"></span>
+    <button id="salir" class="sec">Cerrar sesión</button>
+  </header>
+
+  <nav>
+    <button data-v="empresas">Empresas</button>
+    <button data-v="variaciones">Análisis de variaciones</button>
+    <button data-v="bitacora" class="solo-admin">Registro de actividades</button>
+  </nav>
+
+  <main>
+    <!-- Empresas -->
+    <section id="empresas" class="vista">
+      <h2>Empresas</h2>
+      <form id="formEmpresa" class="fila">
+        <input type="hidden" name="id">
+        <input name="nit" placeholder="NIT" required>
+        <input name="razon_social" placeholder="Razón social" required>
+        <input name="regimen_tributario" placeholder="Régimen tributario">
+        <input name="direccion" placeholder="Dirección">
+        <input name="telefono" placeholder="Teléfono">
+        <button>Guardar</button>
+      </form>
+      <table><thead><tr><th>NIT</th><th>Razón social</th><th>Régimen</th><th></th></tr></thead>
+        <tbody id="tablaEmpresas"></tbody></table>
+    </section>
+
+    <!-- Variaciones -->
+    <section id="variaciones" class="vista oculto">
+      <h2>Análisis de variaciones</h2>
+      <form id="formVar" class="rejilla">
+        <fieldset><legend>Materiales</legend>
+          <label>Precio estándar <input name="precio_std" type="number" step="any" required></label>
+          <label>Precio real <input name="precio_real" type="number" step="any" required></label>
+          <label>Cantidad estándar permitida <input name="cantidad_std_permitida" type="number" step="any" required></label>
+          <label>Cantidad real <input name="cantidad_real" type="number" step="any" required></label>
+        </fieldset>
+        <fieldset><legend>Mano de obra</legend>
+          <label>Tarifa estándar <input name="tarifa_std" type="number" step="any" required></label>
+          <label>Tarifa real <input name="tarifa_real" type="number" step="any" required></label>
+          <label>Horas estándar permitidas <input name="horas_std_permitidas" type="number" step="any" required></label>
+          <label>Horas reales <input name="horas_reales" type="number" step="any" required></label>
+        </fieldset>
+        <fieldset><legend>CIF</legend>
+          <label>CIF fijo presupuestado <input name="cif_fijo_presup" type="number" step="any" required></label>
+          <label>CIF variable presupuestado <input name="cif_variable_presup" type="number" step="any" required></label>
+          <label>Capacidad normal (base) <input name="capacidad_normal" type="number" step="any" required></label>
+          <label>Base estándar permitida <input name="base_std_permitida" type="number" step="any" required></label>
+          <label>CIF real <input name="cif_real" type="number" step="any" required></label>
+        </fieldset>
+        <button>Calcular</button>
+      </form>
+      <div id="resultadoVar"></div>
+    </section>
+
+    <!-- Bitácora -->
+    <section id="bitacora" class="vista oculto">
+      <h2>Registro de actividades</h2>
+      <table><thead><tr><th>Fecha</th><th>Usuario</th><th>Acción</th><th>Detalle</th></tr></thead>
+        <tbody id="tablaBitacora"></tbody></table>
+    </section>
+  </main>
+
+  <script src="js/kosto-web.js"></script>
+<script src="js/api.js"></script>
+  <script src="js/panel.js"></script>
+</body>
+</html>
