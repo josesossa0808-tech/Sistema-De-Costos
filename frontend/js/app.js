@@ -89,7 +89,7 @@ const App = (() => {
     return (e && (e.nombre_comercial || e.razon_social)) || "";
   }
   function actualizarMarca() {
-    document.title = estado.conf?.nombre || "Sistema de Costos";
+    document.title = estado.conf?.nombre || "Kosto";
   }
 
   function periodoActual() { return estado.periodos.find((p) => p.id === estado.periodo) || null; }

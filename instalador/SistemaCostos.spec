@@ -1,5 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
-# PyInstaller: genera dist/SistemaCostos/SistemaCostos.exe
+# PyInstaller: genera dist/Kosto/Kosto.exe
 # Uso: python -m PyInstaller --noconfirm --clean instalador/SistemaCostos.spec
 import os
 
@@ -23,8 +23,8 @@ pyz = PYZ(a.pure)
 exe = EXE(
     pyz, a.scripts, [],
     exclude_binaries=True,
-    name="SistemaCostos",
+    name="Kosto",
     console=True,  # ventana del servidor: cerrarla detiene el sistema
     icon=os.path.join(RAIZ, "instalador", "icono.ico"),
 )
-coll = COLLECT(exe, a.binaries, a.datas, name="SistemaCostos")
+coll = COLLECT(exe, a.binaries, a.datas, name="Kosto")

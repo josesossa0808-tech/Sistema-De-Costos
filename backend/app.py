@@ -157,7 +157,7 @@ def main():
     puerto = cfg.entero("servidor", "puerto", 5000)
     url = "http://%s:%d" % ("127.0.0.1" if host in ("0.0.0.0", "") else host, puerto)
     print("=" * 60)
-    print(" %s v%s" % (cfg.obtener("sistema", "nombre", "Sistema de Costos"), VERSION))
+    print(" %s v%s" % (cfg.obtener("sistema", "nombre", "Kosto"), VERSION))
     print(" Abra en su navegador: %s" % url)
     print(" Para detener el sistema cierre esta ventana (o Ctrl+C)")
     print("=" * 60)
@@ -166,7 +166,7 @@ def main():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         ocupado = s.connect_ex(("127.0.0.1", puerto)) == 0
     if ocupado:
-        print("\n El Sistema de Costos ya está abierto. Abriendo el navegador en %s ..." % url)
+        print("\n Kosto ya está abierto. Abriendo el navegador en %s ..." % url)
         if "--sin-navegador" not in sys.argv:
             webbrowser.open(url)
         import time
