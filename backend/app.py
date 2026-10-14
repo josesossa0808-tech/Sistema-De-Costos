@@ -161,6 +161,17 @@ def main():
     print(" Abra en su navegador: %s" % url)
     print(" Para detener el sistema cierre esta ventana (o Ctrl+C)")
     print("=" * 60)
+    # Si el sistema ya está abierto (puerto ocupado), solo abre el navegador
+    import socket
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        ocupado = s.connect_ex(("127.0.0.1", puerto)) == 0
+    if ocupado:
+        print("\n El Sistema de Costos ya está abierto. Abriendo el navegador en %s ..." % url)
+        if "--sin-navegador" not in sys.argv:
+            webbrowser.open(url)
+        import time
+        time.sleep(4)
+        return
     if cfg.booleano("servidor", "abrir_navegador", True) and "--sin-navegador" not in sys.argv:
         threading.Timer(1.5, lambda: webbrowser.open(url)).start()
     try:
@@ -171,4 +182,23 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except SystemExit:
+        raise
+    except BaseException:
+        # Guarda el error en logs/error.log y deja la ventana abierta para poder leerlo
+        import traceback
+        detalle = traceback.format_exc()
+        print(detalle)
+        try:
+            carpeta = os.path.join(cfg.DIR_BASE, "logs")
+            os.makedirs(carpeta, exist_ok=True)
+            with open(os.path.join(carpeta, "error.log"), "a", encoding="utf-8") as f:
+                f.write(detalle + "\n")
+        except OSError:
+            pass
+        print("Ocurrió un error. El detalle quedó en la carpeta logs (error.log).")
+        if getattr(sys, "frozen", False):
+            input("Presione Enter para cerrar...")
+        sys.exit(1)
