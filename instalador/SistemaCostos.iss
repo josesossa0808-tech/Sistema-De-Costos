@@ -1,6 +1,6 @@
 ; =====================================================================
 ;  SISTEMA DE COSTOS - Script de Inno Setup 6
-;  Genera instalador\Output\Kosto.exe
+;  Genera instalador\Output\Instalar_SistemaCostos.exe
 ;  Compilar: ISCC.exe instalador\SistemaCostos.iss  (después de construir_exe.bat)
 ; =====================================================================
 #define Nombre "Kosto"
@@ -14,7 +14,7 @@ AppPublisher=Kosto
 DefaultDirName={sd}\Kosto
 DefaultGroupName={#Nombre}
 OutputDir=Output
-OutputBaseFilename=Kosto
+OutputBaseFilename=Instalar_SistemaCostos
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
