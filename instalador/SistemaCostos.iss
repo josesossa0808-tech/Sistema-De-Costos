@@ -30,7 +30,7 @@ Name: "es"; MessagesFile: "compiler:Languages\Spanish.isl"
 Name: "escritorio"; Description: "Crear acceso directo en el escritorio"; GroupDescription: "Accesos directos:"
 
 [Files]
-Source: "..\dist\SistemaCostos\*"; DestDir: "{app}"; Excludes: "config\*,docs\*,database\*"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\dist\SistemaCostos\*"; DestDir: "{app}"; Excludes: "\config\*,\docs\*,\database\*"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; La configuración no se sobrescribe al actualizar
 Source: "..\config\config.ini"; DestDir: "{app}\config"; Flags: onlyifdoesntexist uninsneveruninstall
 ; Base de datos con los datos de Deligaby (no se sobrescribe al actualizar)
