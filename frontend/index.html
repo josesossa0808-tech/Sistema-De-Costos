@@ -1,33 +1,52 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sistema de Costos Estándar - Iniciar sesión</title>
+  <title>Sistema de Costos · Ingreso</title>
+  <link rel="icon" href="img/icono.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/estilos.css">
 </head>
-<body class="login">
-  <form id="formLogin" class="tarjeta">
-    <h1>Sistema de Costos Estándar</h1>
-    <p class="sub">Ingrese sus credenciales</p>
-    <label>Usuario <input name="usuario" required autofocus></label>
-    <label>Contraseña <input name="password" type="password" required></label>
-    <button type="submit">Iniciar sesión</button>
-    <p id="error" class="error"></p>
-  </form>
+<body class="pagina-login">
+<main class="login-fondo">
+  <section class="login-tarjeta" aria-labelledby="titulo-login">
+    <h1 id="titulo-login">Sistema de Costos</h1>
+    <p class="login-sub">Materiales, mano de obra, CIF y variaciones</p>
 
-  <script src="js/api.js"></script>
-  <script>
-    document.getElementById('formLogin').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const datos = Object.fromEntries(new FormData(e.target));
-      try {
-        await api('/api/login', 'POST', datos);
-        location.href = 'panel.html';
-      } catch (err) {
-        document.getElementById('error').textContent = err.message;
-      }
-    });
-  </script>
+    <div class="login-pestanas" role="tablist">
+      <button type="button" class="activa" data-pestana="ingresar" role="tab">Iniciar sesión</button>
+      <button type="button" data-pestana="registro" role="tab" id="tab-registro">Crear cuenta</button>
+    </div>
+
+    <div id="mensaje"></div>
+
+    <form id="form-ingresar" novalidate>
+      <div class="campo">
+        <label for="l-usuario">Usuario</label>
+        <input id="l-usuario" name="usuario" autocomplete="username" required autofocus>
+      </div>
+      <div class="campo">
+        <label for="l-clave">Contraseña</label>
+        <input id="l-clave" name="contrasena" type="password" autocomplete="current-password" required>
+      </div>
+      <button class="login-boton" type="submit">Entrar</button>
+    </form>
+
+    <form id="form-registro" class="oculto" novalidate>
+      <div class="campo"><label for="r-nombre">Nombre completo</label><input id="r-nombre" name="nombre" maxlength="120" required></div>
+      <div class="campo"><label for="r-usuario">Usuario</label><input id="r-usuario" name="usuario" maxlength="40" required autocomplete="username">
+        <div class="ayuda">3 a 40 caracteres: letras, números, punto o guion.</div></div>
+      <div class="campo"><label for="r-correo">Correo electrónico</label><input id="r-correo" name="correo" type="email" maxlength="120" required></div>
+      <div class="campo"><label for="r-clave">Contraseña</label><input id="r-clave" name="contrasena" type="password" required autocomplete="new-password">
+        <div class="ayuda" id="ayuda-clave">Mínimo 8 caracteres, con letras y números.</div></div>
+      <div class="campo"><label for="r-confirmar">Confirmar contraseña</label><input id="r-confirmar" name="confirmar" type="password" required autocomplete="new-password"></div>
+      <button class="login-boton" type="submit">Crear cuenta</button>
+    </form>
+
+    <p class="login-nota" id="nota-roles">Las cuentas nuevas quedan con rol Usuario. El administrador puede cambiar los roles.</p>
+  </section>
+</main>
+<script src="js/api.js"></script>
+<script src="js/login.js"></script>
 </body>
 </html>

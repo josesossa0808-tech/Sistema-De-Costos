@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+build/
+dist/
+instalador/Output/
+logs/*
+!logs/.gitkeep
+reportes_generados/*
+!reportes_generados/.gitkeep
+database/*.db
+database/*.db-*
+!database/sistema_costos.db
+mysql/

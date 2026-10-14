@@ -3,97 +3,120 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sistema de Costos Estándar</title>
+<title>Sistema de Costos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     color-scheme: light;
-    --fondo: #f4f7fb; --tarjeta: #ffffff; --texto: #1d2733; --suave: #5f6b7a;
-    --borde: #dbe3ee; --primario: #1d5fbf; --primario-txt: #ffffff; --sec: #e8eef7;
-    --lateral: #1d5fbf; --lateral-txt: #dbe7fb; --lateral-activo: rgba(255,255,255,.2); --lateral-fuerte: #ffffff; --lateral-grupo: #a9c4ef;
-    --peligro: #c0392b; --fav: #1e8449; --desf: #c0392b; --aviso: #fff6dd; --aviso-borde: #efd48a;
+    --fondo: #f4f1ea; --tarjeta: #ffffff; --texto: #1f2a37; --suave: #6f6a60;
+    --borde: #e8e2d6; --cabecera: #f7f4ee; --primario: #1b3f73; --primario-txt: #ffffff; --sec: #eee9df;
+    --lateral: #1b3f73; --lateral-txt: #d5e0f0; --lateral-activo: rgba(255,255,255,.16); --lateral-fuerte: #ffffff; --lateral-grupo: #93abd0;
+    --titulo: #1b3f73; --azul: #1b3f73; --naranja: #c4562b; --verde: #2e6b3f; --dorado: #b8901c;
+    --peligro: #c0392b; --fav: #2e6b3f; --desf: #c4462b; --aviso: #fbf3dc; --aviso-borde: #ecd9a0;
+    --serif: "Playfair Display", Georgia, "Times New Roman", serif;
+    --mono: "IBM Plex Mono", Consolas, "Courier New", monospace;
+    --sans: "Inter", "Segoe UI", system-ui, Arial, sans-serif;
   }
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: "Segoe UI", system-ui, Arial, sans-serif; background: var(--fondo); color: var(--texto); font-size: 15px; }
-  button { background: var(--primario); color: var(--primario-txt); border: 0; padding: 9px 14px; border-radius: 6px; cursor: pointer; font: inherit; }
+  body { margin: 0; font-family: var(--sans); background: var(--fondo); color: var(--texto); font-size: 15px; }
+  button { background: var(--primario); color: var(--primario-txt); border: 0; padding: 10px 18px; border-radius: 6px; cursor: pointer; font: inherit; font-weight: 500; }
+  button:hover { filter: brightness(1.08); }
   button.sec { background: var(--sec); color: var(--texto); }
-  button.peligro { background: var(--peligro); color: #fff; }
-  input, select { padding: 8px 9px; border: 1px solid var(--borde); border-radius: 6px; width: 100%; font: inherit; background: var(--tarjeta); color: var(--texto); }
+  button.peligro { background: transparent; color: var(--peligro); border: 1px solid #ebc3bd; }
+  input, select { padding: 9px 10px; border: 1px solid var(--borde); border-radius: 6px; width: 100%; font: inherit; font-size: 14px; background: #fff; color: var(--texto); }
+  input:focus, select:focus { outline: 2px solid #b9cbe6; border-color: var(--azul); }
   input:disabled { opacity: .6; }
-  label { display: block; font-size: 13px; color: var(--suave); }
-  label input, label select { margin-top: 4px; }
+  label { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--suave); }
+  label input, label select { margin-top: 6px; text-transform: none; letter-spacing: normal; font-family: var(--sans); }
   .oculto { display: none !important; }
-  .error { color: var(--peligro); min-height: 1.2em; margin: 6px 0 0; font-size: 14px; }
+  .error { color: var(--peligro); min-height: 1.2em; margin: 8px 0 0; font-size: 14px; }
   .ok { color: var(--fav); }
-  .aviso { background: var(--aviso); border: 1px solid var(--aviso-borde); border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; }
+  .aviso { background: var(--aviso); border: 1px solid var(--aviso-borde); border-radius: 10px; padding: 12px 16px; margin-bottom: 16px; }
 
   /* ===== Acceso ===== */
   #acceso { display: grid; place-items: center; min-height: 100vh; padding: 16px; }
-  .tarjeta { background: var(--tarjeta); padding: 30px; border-radius: 12px; width: 100%; max-width: 390px; box-shadow: 0 6px 24px rgba(0,0,0,.08); border: 1px solid var(--borde); }
-  .tarjeta h1 { font-size: 21px; margin: 0 0 4px; }
-  .tarjeta .sub { color: var(--suave); margin: 0 0 18px; }
-  .tarjeta label { margin-bottom: 10px; }
-  .pestanas { display: grid; grid-template-columns: 1fr 1fr; background: var(--sec); border-radius: 8px; padding: 4px; margin-bottom: 18px; }
-  .pestanas button { background: transparent; color: var(--suave); }
-  .pestanas button.activa { background: var(--tarjeta); color: var(--texto); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
-  .tarjeta form button[type=submit] { width: 100%; margin-top: 6px; }
-  .nota { font-size: 12px; color: var(--suave); margin-top: 14px; text-align: center; }
+  .tarjeta { background: var(--tarjeta); padding: 34px; border-radius: 14px; width: 100%; max-width: 410px; box-shadow: 0 2px 10px rgba(60,50,30,.06); border: 1px solid var(--borde); border-top: 4px solid var(--azul); }
+  .tarjeta h1 { font-family: var(--serif); font-size: 30px; margin: 0 0 6px; color: var(--titulo); line-height: 1.15; }
+  .tarjeta .sub { font-family: var(--mono); font-size: 12px; color: var(--suave); letter-spacing: .04em; margin: 0 0 22px; }
+  .tarjeta label { margin-bottom: 14px; }
+  .pestanas { display: grid; grid-template-columns: 1fr 1fr; background: var(--sec); border-radius: 8px; padding: 4px; margin-bottom: 20px; }
+  .pestanas button { background: transparent; color: var(--suave); font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; padding: 9px; }
+  .pestanas button.activa { background: var(--tarjeta); color: var(--titulo); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .tarjeta form button[type=submit] { width: 100%; margin-top: 4px; }
+  .nota { font-family: var(--mono); font-size: 11px; color: var(--suave); margin-top: 16px; text-align: center; }
 
-  /* ===== Aplicación con barra lateral ===== */
+  /* ===== Barra lateral ===== */
   #app { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
   aside { background: var(--lateral); color: var(--lateral-txt); display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; }
-  .marca { color: var(--lateral-fuerte); font-weight: 700; font-size: 17px; padding: 18px 20px 12px; line-height: 1.3; }
-  .marca small { display: block; font-weight: 400; font-size: 12px; color: var(--lateral-txt); }
-  .empresa-activa { padding: 0 14px 12px; border-bottom: 1px solid rgba(255,255,255,.2); }
-  .empresa-activa span { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--lateral-grupo); padding-left: 4px; }
-  .empresa-activa select { margin-top: 4px; background: rgba(255,255,255,.15); color: var(--lateral-fuerte); border-color: rgba(255,255,255,.35); }
-  .empresa-activa option { color: #1d2733; }
-  .menu { flex: 1; overflow-y: auto; padding: 8px 10px; }
-  .grupo { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--lateral-grupo); padding: 14px 10px 4px; }
-  .menu button { width: 100%; background: transparent; color: var(--lateral-txt); text-align: left; padding: 8px 12px; border-radius: 7px; font-size: 14px; }
-  .menu button:hover { background: rgba(255,255,255,.12); }
+  .marca { color: var(--lateral-fuerte); font-family: var(--serif); font-weight: 700; font-size: 22px; padding: 22px 20px 14px; line-height: 1.2; }
+  .marca small { display: block; font-family: var(--mono); font-weight: 400; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--lateral-txt); margin-top: 4px; }
+  .empresa-activa { padding: 0 14px 14px; border-bottom: 1px solid rgba(255,255,255,.15); }
+  .empresa-activa span { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .14em; color: var(--lateral-grupo); padding-left: 4px; }
+  .empresa-activa select { margin-top: 6px; background: rgba(255,255,255,.1); color: var(--lateral-fuerte); border-color: rgba(255,255,255,.25); }
+  .empresa-activa option { color: #1f2a37; }
+  .menu { flex: 1; overflow-y: auto; padding: 6px 10px 12px; }
+  .grupo { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .14em; color: var(--lateral-grupo); padding: 16px 12px 6px; }
+  .menu button { width: 100%; background: transparent; color: var(--lateral-txt); text-align: left; padding: 8px 12px; border-radius: 6px; font-size: 14px; font-weight: 400; }
+  .menu button:hover { background: rgba(255,255,255,.08); filter: none; }
   .menu button.activo { background: var(--lateral-activo); color: var(--lateral-fuerte); font-weight: 600; }
-  .cuenta { border-top: 1px solid rgba(255,255,255,.2); padding: 12px 20px 16px; font-size: 14px; }
+  .cuenta { border-top: 1px solid rgba(255,255,255,.15); padding: 14px 20px 18px; font-size: 14px; }
   .cuenta b { color: var(--lateral-fuerte); display: block; }
-  .rol { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(255,255,255,.2); margin-top: 4px; }
-  .salir { background: transparent; color: var(--lateral-txt); padding: 8px 0 0; display: block; }
-  .salir:hover { color: var(--lateral-fuerte); }
+  .rol { display: inline-block; font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; padding: 3px 9px; border-radius: 99px; background: rgba(255,255,255,.15); margin-top: 6px; }
+  .salir { background: transparent; color: var(--lateral-txt); padding: 10px 0 0; display: block; font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+  .salir:hover { color: var(--lateral-fuerte); filter: none; }
   .barra-movil { display: none; }
 
-  main { padding: 26px 28px 60px; max-width: 1200px; width: 100%; }
-  h2 { margin: 0 0 4px; }
-  h3 { margin: 22px 0 6px; font-size: 16px; }
-  .desc { color: var(--suave); margin: 0 0 18px; }
-  .formulario { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 10px; padding: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; align-items: end; }
+  /* ===== Contenido ===== */
+  main { padding: 34px 40px 70px; max-width: 1280px; width: 100%; min-width: 0; }
+  h2 { font-family: var(--serif); font-size: 36px; font-weight: 700; color: var(--titulo); margin: 0 0 6px; line-height: 1.15; }
+  .desc { font-family: var(--mono); font-size: 13px; color: var(--suave); letter-spacing: .03em; margin: 0 0 26px; }
+  h3, .seccion { font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--suave);
+    margin: 30px 0 12px; padding-left: 10px; border-left: 3px solid var(--titulo); line-height: 1.3; }
+  .formulario { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 14px; padding: 22px 24px; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; align-items: end; box-shadow: 0 1px 4px rgba(60,50,30,.04); }
   .formulario .acciones { display: flex; gap: 8px; }
-  .tabla { overflow-x: auto; margin-top: 14px; }
-  table { width: 100%; border-collapse: collapse; background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 10px; overflow: hidden; }
-  th, td { padding: 9px 12px; border-bottom: 1px solid var(--borde); text-align: left; white-space: nowrap; }
-  tr:last-child td { border-bottom: 0; }
-  th { font-size: 12px; color: var(--suave); font-weight: 600; text-transform: uppercase; letter-spacing: .03em; }
-  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .tabla { overflow-x: auto; margin-top: 12px; background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 14px; padding: 8px 22px 14px; box-shadow: 0 1px 4px rgba(60,50,30,.04); }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 13px 14px; border-bottom: 1px solid var(--borde); text-align: left; white-space: nowrap; }
+  thead th { background: var(--cabecera); font-family: var(--mono); font-size: 11px; color: var(--suave); font-weight: 500; text-transform: uppercase; letter-spacing: .12em; border-bottom: 1px solid #ddd5c6; }
+  td { font-size: 14px; }
+  td:first-child { font-weight: 600; }
+  td.num, th.num { text-align: right; }
+  td.num { font-family: var(--mono); font-size: 13.5px; }
   td.acc { text-align: right; }
-  td button { padding: 4px 10px; font-size: 13px; }
-  tr.total td { font-weight: 700; background: var(--sec); }
+  td button { padding: 5px 12px; font-size: 13px; }
+  tbody tr:last-child td { border-bottom: 0; }
+  tr.total td { font-weight: 700; background: var(--cabecera); border-top: 2px solid #ddd5c6; }
   .fav { color: var(--fav); font-weight: 600; }
   .desf { color: var(--desf); font-weight: 600; }
-  .vacio { color: var(--suave); }
-  .cifras { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin-bottom: 18px; }
-  .cifra { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 10px; padding: 14px 16px; }
-  .cifra span { color: var(--suave); font-size: 13px; }
-  .cifra b { display: block; font-size: 24px; margin-top: 4px; font-variant-numeric: tabular-nums; }
-  .pasos { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 10px; padding: 6px 18px; }
-  .pasos li { padding: 6px 0; }
+  .vacio { color: var(--suave); font-weight: 400 !important; font-family: var(--mono); font-size: 13px; }
+  .cifras { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 18px; margin-bottom: 26px; }
+  .cifra { background: var(--tarjeta); border: 1px solid var(--borde); border-top: 3px solid var(--azul); border-radius: 12px; padding: 20px 22px; box-shadow: 0 1px 4px rgba(60,50,30,.05); }
+  .cifra:nth-child(4n+2) { border-top-color: var(--naranja); } .cifra:nth-child(4n+2) b { color: var(--naranja); }
+  .cifra:nth-child(4n+3) { border-top-color: var(--verde); } .cifra:nth-child(4n+3) b { color: var(--verde); }
+  .cifra:nth-child(4n+4) { border-top-color: var(--dorado); } .cifra:nth-child(4n+4) b { color: var(--dorado); }
+  .cifra span { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--suave); }
+  .cifra b { display: block; font-family: var(--serif); font-size: 32px; font-weight: 700; color: var(--azul); margin: 8px 0 6px; line-height: 1.1; }
+  .cifra b + span { text-transform: none; letter-spacing: .02em; }
+  .cifra b.chico { font-size: 24px; }
+  .cifra b.fav { color: var(--fav) !important; } .cifra b.desf { color: var(--desf) !important; }
+  .pasos { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 14px; padding: 12px 22px 12px 44px; margin: 0; }
+  .pasos li { padding: 8px 0; border-bottom: 1px solid var(--borde); }
+  .pasos li:last-child { border-bottom: 0; }
   .pasos li.hecho { color: var(--suave); text-decoration: line-through; }
-  .filtros { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
-  .filtros label { min-width: 220px; }
+  .filtros { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+  .filtros label { min-width: 260px; }
 
   @media (max-width: 800px) {
     #app { grid-template-columns: 1fr; }
-    .barra-movil { display: flex; align-items: center; gap: 12px; background: var(--lateral); color: var(--lateral-fuerte); padding: 12px 16px; position: sticky; top: 0; z-index: 5; }
+    .barra-movil { display: flex; align-items: center; gap: 12px; background: var(--lateral); color: var(--lateral-fuerte); padding: 12px 16px; position: sticky; top: 0; z-index: 5; font-family: var(--serif); font-size: 18px; }
     .barra-movil button { background: transparent; color: inherit; padding: 2px 8px; font-size: 22px; line-height: 1; }
     aside { position: fixed; inset: 0 auto 0 0; width: 270px; z-index: 10; transform: translateX(-100%); transition: transform .2s; }
     aside.abierto { transform: none; box-shadow: 0 0 0 100vmax rgba(0,0,0,.45); }
-    main { padding: 18px 16px 60px; }
+    main { padding: 22px 16px 60px; }
+    h2 { font-size: 28px; }
+    .tabla { padding: 4px 10px 10px; }
   }
 </style>
 </head>
@@ -102,7 +125,7 @@
 <!-- ================= Acceso ================= -->
 <section id="acceso">
   <div class="tarjeta">
-    <h1>Sistema de Costos Estándar</h1>
+    <h1>Sistema de Costos</h1>
     <p class="sub">Materiales, mano de obra, CIF y variaciones</p>
     <div class="pestanas">
       <button type="button" id="tabEntrar" class="activa">Iniciar sesión</button>
@@ -145,7 +168,9 @@
 // =====================================================================
 //  ALMACENAMIENTO (se guarda en el navegador)
 // =====================================================================
-const CLAVE = 'sistema-costos-v3';
+const CLAVE = 'sistema-costos-deligaby-v1';
+// Datos de la empresa Deligaby (tomados del Excel de costeo) que se cargan la primera vez
+const SEMILLA = {"sigId": 148, "t": {"empresas": [{"id": 2, "nit": "PENDIENTE", "razon_social": "Deligaby", "regimen": "No responsable de IVA", "ciiu": "1081", "retenedor": "No", "ciudad": "", "direccion": "", "telefono": ""}], "periodos": [{"id": 3, "empresa_id": 2, "nombre": "Octubre 2026", "inicio": "2026-10-01", "fin": "2026-10-31", "estado": "Abierto"}], "unidades": [{"id": 4, "empresa_id": 2, "codigo": "UND", "nombre": "Unidad"}, {"id": 5, "empresa_id": 2, "codigo": "GR", "nombre": "Gramo"}, {"id": 6, "empresa_id": 2, "codigo": "ML", "nombre": "Mililitro"}, {"id": 7, "empresa_id": 2, "codigo": "PAQ", "nombre": "Paquete"}], "centros": [{"id": 8, "empresa_id": 2, "codigo": "PROD", "nombre": "Cocina de producción", "tipo": "Producción"}], "productos": [{"id": 9, "empresa_id": 2, "codigo": "P01", "nombre": "Torta Vainilla - Vitina", "unidad_id": 4, "precio_venta": 75000, "descripcion": "Importado del Excel. Se vende por unidad completa. Domicilio / gastos de operación por unidad: $0.00 (no es costo de producción)."}, {"id": 10, "empresa_id": 2, "codigo": "P02", "nombre": "Torta Vainilla - Mantequilla", "unidad_id": 4, "precio_venta": 75000, "descripcion": "Importado del Excel. Se vende por unidad completa. Domicilio / gastos de operación por unidad: $0.00 (no es costo de producción)."}, {"id": 11, "empresa_id": 2, "codigo": "P03", "nombre": "CopCake vainilla - Vitina", "unidad_id": 4, "precio_venta": 4500, "descripcion": "Importado del Excel. Lote de 30 unidades. Domicilio / gastos de operación por unidad: $233.33 (no es costo de producción)."}, {"id": 12, "empresa_id": 2, "codigo": "P04", "nombre": "CopCake vainilla - Mantequilla", "unidad_id": 4, "precio_venta": 4500, "descripcion": "Importado del Excel. Lote de 30 unidades. Domicilio / gastos de operación por unidad: $233.33 (no es costo de producción)."}, {"id": 13, "empresa_id": 2, "codigo": "P05", "nombre": "CopCake vainilla decorado - Vitina", "unidad_id": 4, "precio_venta": 6500, "descripcion": "Importado del Excel. Lote de 30 unidades. Domicilio / gastos de operación por unidad: $233.33 (no es costo de producción)."}, {"id": 14, "empresa_id": 2, "codigo": "P06", "nombre": "CopCake vainilla decorado - Mantequilla", "unidad_id": 4, "precio_venta": 6500, "descripcion": "Importado del Excel. Lote de 30 unidades. Domicilio / gastos de operación por unidad: $233.33 (no es costo de producción)."}, {"id": 15, "empresa_id": 2, "codigo": "P07", "nombre": "CopCake de chocolate", "unidad_id": 4, "precio_venta": 5000, "descripcion": "Importado del Excel. Lote de 30 unidades. Domicilio / gastos de operación por unidad: $233.33 (no es costo de producción)."}], "materiales": [{"id": 16, "empresa_id": 2, "codigo": "MP01", "descripcion": "Harina", "unidad_id": 5, "precio_std": 4.5, "proveedor": "Almacenes Éxito", "centro_id": 8}, {"id": 17, "empresa_id": 2, "codigo": "MP02", "descripcion": "Azúcar", "unidad_id": 5, "precio_std": 5.1, "proveedor": "Almacenes Éxito", "centro_id": 8}, {"id": 18, "empresa_id": 2, "codigo": "MP03", "descripcion": "Vitina (margarina)", "unidad_id": 5, "precio_std": 13, "proveedor": "Dispropan Caribe", "centro_id": 8}, {"id": 19, "empresa_id": 2, "codigo": "MP04", "descripcion": "Azúcar glas", "unidad_id": 5, "precio_std": 9.1, "proveedor": "Almacenes Éxito", "centro_id": 8}, {"id": 20, "empresa_id": 2, "codigo": "MP05", "descripcion": "Huevos", "unidad_id": 4, "precio_std": 890, "proveedor": "Almacenes Éxito", "centro_id": 8}, {"id": 21, "empresa_id": 2, "codigo": "MP06", "descripcion": "Sal (pizca)", "unidad_id": 4, "precio_std": 50, "proveedor": "", "centro_id": 8}, {"id": 22, "empresa_id": 2, "codigo": "MP07", "descripcion": "Leche entera", "unidad_id": 6, "precio_std": 4.49, "proveedor": "Almacenes Éxito", "centro_id": 8}, {"id": 23, "empresa_id": 2, "codigo": "MP08", "descripcion": "Polvo para hornear", "unidad_id": 5, "precio_std": 94, "proveedor": "Almacenes Éxito", "centro_id": 8}, {"id": 24, "empresa_id": 2, "codigo": "MP09", "descripcion": "Galletas Oreo", "unidad_id": 7, "precio_std": 1310, "proveedor": "", "centro_id": 8}, {"id": 25, "empresa_id": 2, "codigo": "MP10", "descripcion": "Esencia de vainilla", "unidad_id": 6, "precio_std": 30.9677, "proveedor": "Mercacentro", "centro_id": 8}, {"id": 26, "empresa_id": 2, "codigo": "MP11", "descripcion": "Mantequilla", "unidad_id": 5, "precio_std": 62.2, "proveedor": "Almacenes Éxito", "centro_id": 8}, {"id": 27, "empresa_id": 2, "codigo": "MP12", "descripcion": "Base de cartón torta", "unidad_id": 4, "precio_std": 1500, "proveedor": "", "centro_id": 8}, {"id": 28, "empresa_id": 2, "codigo": "MP13", "descripcion": "Capacillo", "unidad_id": 4, "precio_std": 60, "proveedor": "Orquídea", "centro_id": 8}, {"id": 29, "empresa_id": 2, "codigo": "MP14", "descripcion": "Caja x12 cupcakes", "unidad_id": 4, "precio_std": 5500, "proveedor": "Los Cartujos", "centro_id": 8}, {"id": 30, "empresa_id": 2, "codigo": "MP15", "descripcion": "Manga pastelera desechable", "unidad_id": 4, "precio_std": 500, "proveedor": "", "centro_id": 8}], "estMP": [{"id": 31, "empresa_id": 2, "producto_id": 9, "material_id": 16, "cantidad": 500}, {"id": 32, "empresa_id": 2, "producto_id": 9, "material_id": 17, "cantidad": 400}, {"id": 33, "empresa_id": 2, "producto_id": 9, "material_id": 18, "cantidad": 400}, {"id": 34, "empresa_id": 2, "producto_id": 9, "material_id": 20, "cantidad": 8}, {"id": 35, "empresa_id": 2, "producto_id": 9, "material_id": 22, "cantidad": 250}, {"id": 36, "empresa_id": 2, "producto_id": 9, "material_id": 23, "cantidad": 15}, {"id": 37, "empresa_id": 2, "producto_id": 9, "material_id": 25, "cantidad": 15}, {"id": 38, "empresa_id": 2, "producto_id": 9, "material_id": 21, "cantidad": 1}, {"id": 39, "empresa_id": 2, "producto_id": 9, "material_id": 27, "cantidad": 1}, {"id": 40, "empresa_id": 2, "producto_id": 10, "material_id": 16, "cantidad": 500}, {"id": 41, "empresa_id": 2, "producto_id": 10, "material_id": 17, "cantidad": 400}, {"id": 42, "empresa_id": 2, "producto_id": 10, "material_id": 26, "cantidad": 400}, {"id": 43, "empresa_id": 2, "producto_id": 10, "material_id": 20, "cantidad": 8}, {"id": 44, "empresa_id": 2, "producto_id": 10, "material_id": 22, "cantidad": 250}, {"id": 45, "empresa_id": 2, "producto_id": 10, "material_id": 23, "cantidad": 15}, {"id": 46, "empresa_id": 2, "producto_id": 10, "material_id": 25, "cantidad": 15}, {"id": 47, "empresa_id": 2, "producto_id": 10, "material_id": 21, "cantidad": 1}, {"id": 48, "empresa_id": 2, "producto_id": 10, "material_id": 27, "cantidad": 1}, {"id": 49, "empresa_id": 2, "producto_id": 11, "material_id": 16, "cantidad": 16.666667}, {"id": 50, "empresa_id": 2, "producto_id": 11, "material_id": 17, "cantidad": 13.333333}, {"id": 51, "empresa_id": 2, "producto_id": 11, "material_id": 18, "cantidad": 13.333333}, {"id": 52, "empresa_id": 2, "producto_id": 11, "material_id": 20, "cantidad": 0.266667}, {"id": 53, "empresa_id": 2, "producto_id": 11, "material_id": 22, "cantidad": 8.333333}, {"id": 54, "empresa_id": 2, "producto_id": 11, "material_id": 23, "cantidad": 0.5}, {"id": 55, "empresa_id": 2, "producto_id": 11, "material_id": 25, "cantidad": 0.5}, {"id": 56, "empresa_id": 2, "producto_id": 11, "material_id": 21, "cantidad": 0.033333}, {"id": 57, "empresa_id": 2, "producto_id": 11, "material_id": 28, "cantidad": 1}, {"id": 58, "empresa_id": 2, "producto_id": 11, "material_id": 29, "cantidad": 0.1}, {"id": 59, "empresa_id": 2, "producto_id": 12, "material_id": 16, "cantidad": 16.666667}, {"id": 60, "empresa_id": 2, "producto_id": 12, "material_id": 17, "cantidad": 13.333333}, {"id": 61, "empresa_id": 2, "producto_id": 12, "material_id": 26, "cantidad": 13.333333}, {"id": 62, "empresa_id": 2, "producto_id": 12, "material_id": 20, "cantidad": 0.266667}, {"id": 63, "empresa_id": 2, "producto_id": 12, "material_id": 22, "cantidad": 8.333333}, {"id": 64, "empresa_id": 2, "producto_id": 12, "material_id": 23, "cantidad": 0.5}, {"id": 65, "empresa_id": 2, "producto_id": 12, "material_id": 25, "cantidad": 0.5}, {"id": 66, "empresa_id": 2, "producto_id": 12, "material_id": 21, "cantidad": 0.033333}, {"id": 67, "empresa_id": 2, "producto_id": 12, "material_id": 28, "cantidad": 1}, {"id": 68, "empresa_id": 2, "producto_id": 12, "material_id": 29, "cantidad": 0.1}, {"id": 69, "empresa_id": 2, "producto_id": 13, "material_id": 16, "cantidad": 16.666667}, {"id": 70, "empresa_id": 2, "producto_id": 13, "material_id": 17, "cantidad": 13.333333}, {"id": 71, "empresa_id": 2, "producto_id": 13, "material_id": 18, "cantidad": 13.333333}, {"id": 72, "empresa_id": 2, "producto_id": 13, "material_id": 20, "cantidad": 0.266667}, {"id": 73, "empresa_id": 2, "producto_id": 13, "material_id": 22, "cantidad": 9}, {"id": 74, "empresa_id": 2, "producto_id": 13, "material_id": 23, "cantidad": 0.5}, {"id": 75, "empresa_id": 2, "producto_id": 13, "material_id": 25, "cantidad": 0.666667}, {"id": 76, "empresa_id": 2, "producto_id": 13, "material_id": 21, "cantidad": 0.033333}, {"id": 77, "empresa_id": 2, "producto_id": 13, "material_id": 28, "cantidad": 1}, {"id": 78, "empresa_id": 2, "producto_id": 13, "material_id": 29, "cantidad": 0.1}, {"id": 79, "empresa_id": 2, "producto_id": 13, "material_id": 26, "cantidad": 8.333333}, {"id": 80, "empresa_id": 2, "producto_id": 13, "material_id": 19, "cantidad": 16.666667}, {"id": 81, "empresa_id": 2, "producto_id": 13, "material_id": 30, "cantidad": 0.033333}, {"id": 82, "empresa_id": 2, "producto_id": 14, "material_id": 16, "cantidad": 16.666667}, {"id": 83, "empresa_id": 2, "producto_id": 14, "material_id": 17, "cantidad": 13.333333}, {"id": 84, "empresa_id": 2, "producto_id": 14, "material_id": 26, "cantidad": 21.666667}, {"id": 85, "empresa_id": 2, "producto_id": 14, "material_id": 20, "cantidad": 0.266667}, {"id": 86, "empresa_id": 2, "producto_id": 14, "material_id": 22, "cantidad": 9}, {"id": 87, "empresa_id": 2, "producto_id": 14, "material_id": 23, "cantidad": 0.5}, {"id": 88, "empresa_id": 2, "producto_id": 14, "material_id": 25, "cantidad": 0.666667}, {"id": 89, "empresa_id": 2, "producto_id": 14, "material_id": 21, "cantidad": 0.033333}, {"id": 90, "empresa_id": 2, "producto_id": 14, "material_id": 28, "cantidad": 1}, {"id": 91, "empresa_id": 2, "producto_id": 14, "material_id": 29, "cantidad": 0.1}, {"id": 92, "empresa_id": 2, "producto_id": 14, "material_id": 19, "cantidad": 16.666667}, {"id": 93, "empresa_id": 2, "producto_id": 14, "material_id": 30, "cantidad": 0.033333}, {"id": 94, "empresa_id": 2, "producto_id": 15, "material_id": 16, "cantidad": 16.666667}, {"id": 95, "empresa_id": 2, "producto_id": 15, "material_id": 17, "cantidad": 13.333333}, {"id": 96, "empresa_id": 2, "producto_id": 15, "material_id": 18, "cantidad": 13.333333}, {"id": 97, "empresa_id": 2, "producto_id": 15, "material_id": 20, "cantidad": 0.266667}, {"id": 98, "empresa_id": 2, "producto_id": 15, "material_id": 22, "cantidad": 8.333333}, {"id": 99, "empresa_id": 2, "producto_id": 15, "material_id": 23, "cantidad": 0.5}, {"id": 100, "empresa_id": 2, "producto_id": 15, "material_id": 25, "cantidad": 0.5}, {"id": 101, "empresa_id": 2, "producto_id": 15, "material_id": 21, "cantidad": 0.033333}, {"id": 102, "empresa_id": 2, "producto_id": 15, "material_id": 28, "cantidad": 1}, {"id": 103, "empresa_id": 2, "producto_id": 15, "material_id": 29, "cantidad": 0.1}], "cargos": [{"id": 104, "empresa_id": 2, "nombre": "Repostero(a)", "descripcion": "Tarifa según la plantilla de costeo ($10.000 por hora)"}], "trabajadores": [{"id": 105, "empresa_id": 2, "documento": "TRAB-01", "nombre": "Repostero(a) de Deligaby", "cargo_id": 104, "salario": 1920000, "prestaciones": 0, "horas_mes": 192}], "estMOD": [{"id": 106, "empresa_id": 2, "producto_id": 9, "horas": 1.5, "tarifa": 10000, "horas_maq": 1}, {"id": 107, "empresa_id": 2, "producto_id": 10, "horas": 1.5, "tarifa": 10000, "horas_maq": 1}, {"id": 108, "empresa_id": 2, "producto_id": 11, "horas": 0.083333, "tarifa": 10000, "horas_maq": 0.033333}, {"id": 109, "empresa_id": 2, "producto_id": 12, "horas": 0.083333, "tarifa": 10000, "horas_maq": 0.033333}, {"id": 110, "empresa_id": 2, "producto_id": 13, "horas": 0.116667, "tarifa": 10000, "horas_maq": 0.033333}, {"id": 111, "empresa_id": 2, "producto_id": 14, "horas": 0.116667, "tarifa": 10000, "horas_maq": 0.033333}, {"id": 112, "empresa_id": 2, "producto_id": 15, "horas": 0.083333, "tarifa": 10000, "horas_maq": 0.033333}], "cifPres": [{"id": 113, "empresa_id": 2, "periodo_id": 3, "fijo": 95000, "variable": 7500, "base": "Horas máquina", "capacidad": 3}], "cifReal": [{"id": 114, "empresa_id": 2, "periodo_id": 3, "concepto": "Mantenimiento de horno", "tipo": "Fijo", "valor": 70000, "centro_id": 8}, {"id": 115, "empresa_id": 2, "periodo_id": 3, "concepto": "Mantenimiento de batidora", "tipo": "Fijo", "valor": 25000, "centro_id": 8}, {"id": 116, "empresa_id": 2, "periodo_id": 3, "concepto": "Servicios (agua, luz, gas)", "tipo": "Variable", "valor": 7500, "centro_id": 8}], "ordenes": [{"id": 117, "empresa_id": 2, "numero": "OP-0001", "producto_id": 9, "periodo_id": 3, "fecha": "2026-10-05", "cantidad": 1, "horas_reales": 1.5, "tarifa_real": 10000, "horas_maq_reales": 1, "estado": "Terminada"}, {"id": 127, "empresa_id": 2, "numero": "OP-0002", "producto_id": 10, "periodo_id": 3, "fecha": "2026-10-10", "cantidad": 1, "horas_reales": 1.5, "tarifa_real": 10000, "horas_maq_reales": 1, "estado": "Terminada"}, {"id": 137, "empresa_id": 2, "numero": "OP-0003", "producto_id": 11, "periodo_id": 3, "fecha": "2026-10-15", "cantidad": 30, "horas_reales": 2.5, "tarifa_real": 10000, "horas_maq_reales": 1, "estado": "Terminada"}], "consumos": [{"id": 118, "empresa_id": 2, "orden_id": 117, "material_id": 16, "cantidad": 500, "precio": 4.5}, {"id": 119, "empresa_id": 2, "orden_id": 117, "material_id": 17, "cantidad": 400, "precio": 5.1}, {"id": 120, "empresa_id": 2, "orden_id": 117, "material_id": 18, "cantidad": 400, "precio": 13}, {"id": 121, "empresa_id": 2, "orden_id": 117, "material_id": 20, "cantidad": 8, "precio": 890}, {"id": 122, "empresa_id": 2, "orden_id": 117, "material_id": 21, "cantidad": 1, "precio": 50}, {"id": 123, "empresa_id": 2, "orden_id": 117, "material_id": 22, "cantidad": 250, "precio": 4.49}, {"id": 124, "empresa_id": 2, "orden_id": 117, "material_id": 23, "cantidad": 15, "precio": 94}, {"id": 125, "empresa_id": 2, "orden_id": 117, "material_id": 25, "cantidad": 15, "precio": 30.9677}, {"id": 126, "empresa_id": 2, "orden_id": 117, "material_id": 27, "cantidad": 1, "precio": 1500}, {"id": 128, "empresa_id": 2, "orden_id": 127, "material_id": 16, "cantidad": 500, "precio": 4.5}, {"id": 129, "empresa_id": 2, "orden_id": 127, "material_id": 17, "cantidad": 400, "precio": 5.1}, {"id": 130, "empresa_id": 2, "orden_id": 127, "material_id": 20, "cantidad": 8, "precio": 890}, {"id": 131, "empresa_id": 2, "orden_id": 127, "material_id": 21, "cantidad": 1, "precio": 50}, {"id": 132, "empresa_id": 2, "orden_id": 127, "material_id": 22, "cantidad": 250, "precio": 4.49}, {"id": 133, "empresa_id": 2, "orden_id": 127, "material_id": 23, "cantidad": 15, "precio": 94}, {"id": 134, "empresa_id": 2, "orden_id": 127, "material_id": 25, "cantidad": 15, "precio": 30.9677}, {"id": 135, "empresa_id": 2, "orden_id": 127, "material_id": 26, "cantidad": 400, "precio": 62.2}, {"id": 136, "empresa_id": 2, "orden_id": 127, "material_id": 27, "cantidad": 1, "precio": 1500}, {"id": 138, "empresa_id": 2, "orden_id": 137, "material_id": 16, "cantidad": 500.00001, "precio": 4.5}, {"id": 139, "empresa_id": 2, "orden_id": 137, "material_id": 17, "cantidad": 399.99999, "precio": 5.1}, {"id": 140, "empresa_id": 2, "orden_id": 137, "material_id": 18, "cantidad": 399.99999, "precio": 13}, {"id": 141, "empresa_id": 2, "orden_id": 137, "material_id": 20, "cantidad": 8.00001, "precio": 890}, {"id": 142, "empresa_id": 2, "orden_id": 137, "material_id": 21, "cantidad": 0.99999, "precio": 50}, {"id": 143, "empresa_id": 2, "orden_id": 137, "material_id": 22, "cantidad": 249.99999, "precio": 4.49}, {"id": 144, "empresa_id": 2, "orden_id": 137, "material_id": 23, "cantidad": 15, "precio": 94}, {"id": 145, "empresa_id": 2, "orden_id": 137, "material_id": 25, "cantidad": 15, "precio": 30.9677}, {"id": 146, "empresa_id": 2, "orden_id": 137, "material_id": 28, "cantidad": 30, "precio": 60}, {"id": 147, "empresa_id": 2, "orden_id": 137, "material_id": 29, "cantidad": 3, "precio": 5500}]}};
 let memoria = null;
 function leer() { try { const t = localStorage.getItem(CLAVE); if (t) return JSON.parse(t); } catch (e) {} return memoria; }
 function escribir(d) { memoria = d; try { localStorage.setItem(CLAVE, JSON.stringify(d)); } catch (e) {} }
@@ -153,7 +178,8 @@ function hash(t) { let h = 5381; for (const c of 'costos::' + t) h = ((h << 5) +
 
 const TABLAS = ['empresas', 'periodos', 'unidades', 'centros', 'productos', 'materiales', 'estMP', 'cargos',
   'trabajadores', 'estMOD', 'cifPres', 'cifReal', 'ordenes', 'consumos'];
-let DB = leer() || { sigId: 1, usuarios: [], bitacora: [], empresaActiva: {}, t: {} };
+let DB = leer() || { sigId: SEMILLA.sigId + 1, usuarios: [{ id: SEMILLA.sigId, usuario: 'admin', nombre: 'Administrador del sistema', pass: hash('Admin123*'), rol: 'Administrador', activo: true, creado: new Date().toLocaleString('es-CO') }],
+  bitacora: [], empresaActiva: {}, t: JSON.parse(JSON.stringify(SEMILLA.t)) };
 TABLAS.forEach(t => DB.t[t] ||= []);
 const T = DB.t;
 const guardar = () => escribir(DB);
@@ -218,9 +244,10 @@ const E = {
 
   productos: { titulo: 'Productos', desc: 'Productos que fabrica la empresa.', unico: 'codigo',
     campos: [{ n: 'codigo', l: 'Código', req: 1 }, { n: 'nombre', l: 'Nombre', req: 1 },
-      { n: 'unidad_id', l: 'Unidad de medida', t: 'select', ref: 1, o: opts('unidades', r => `${r.codigo} - ${r.nombre}`) }],
+      { n: 'unidad_id', l: 'Unidad de medida', t: 'select', ref: 1, o: opts('unidades', r => `${r.codigo} - ${r.nombre}`) },
+      { n: 'precio_venta', l: 'Precio de venta', t: 'number', def: 0 }, { n: 'descripcion', l: 'Descripción' }],
     cols: [['Código', r => esc(r.codigo)], ['Producto', r => esc(r.nombre)], ['Unidad', r => esc(nombre('unidades', r.unidad_id, 'codigo'))],
-      ['Costo estándar unitario', r => pesos(costoEstandarUnitario(r.id).total), 1]] },
+      ['Costo estándar unitario', r => pesos(costoEstandarUnitario(r.id).total), 1], ['Precio de venta', r => pesos(r.precio_venta), 1]] },
 
   materiales: { titulo: 'Registro de materiales', desc: 'Materias primas directas con su precio estándar y proveedor.', unico: 'codigo',
     campos: [{ n: 'codigo', l: 'Código del material', req: 1 }, { n: 'descripcion', l: 'Descripción', req: 1 },
@@ -410,6 +437,7 @@ function pestana(crear) {
   $('#errEntrar').textContent = $('#errCrear').textContent = '';
   $('#notaAcceso').textContent = DB.usuarios.length ? 'Las cuentas nuevas quedan con rol Usuario. El administrador puede cambiar los roles.'
     : 'La primera cuenta que se cree será el Administrador del sistema.';
+  if (DB.usuarios.some(u => u.usuario === 'admin')) $('#notaAcceso').textContent = 'Ingreso de prueba: usuario admin · contraseña Admin123*  (o cree su propia cuenta)';
 }
 $('#tabEntrar').onclick = () => pestana(false);
 $('#tabCrear').onclick = () => pestana(true);
@@ -449,7 +477,7 @@ $('#btnSalir').onclick = () => {
 //  BARRA LATERAL
 // =====================================================================
 const MENU = [
-  ['General', [['inicio', 'Inicio']]],
+  ['General', [['inicio', 'Dashboard']]],
   ['Datos generales', [['empresas', 'Empresas'], ['periodos', 'Periodos contables'], ['unidades', 'Unidades de medida'], ['centros', 'Centros de costos'], ['productos', 'Productos']]],
   ['Materia prima directa', [['materiales', 'Registro de materiales'], ['estMP', 'Cantidades estándar']]],
   ['Mano de obra directa', [['cargos', 'Cargos'], ['trabajadores', 'Trabajadores y salarios'], ['estMOD', 'Hora y tarifa estándar']]],
@@ -502,7 +530,7 @@ function vistaEntidad(k) {
     ${puedeEditar() ? `<form id="fEnt" class="formulario"><input type="hidden" name="id">${e.campos.map(campoHTML).join('')}
       <div class="acciones"><button>Guardar</button><button type="button" class="sec oculto" id="btnCancelar">Cancelar</button></div></form>`
       : '<div class="aviso">Su rol es <b>Estudiante</b>: puede consultar, pero no modificar.</div>'}
-    <div class="tabla"><table><thead><tr>${e.cols.map(([l, , d]) => `<th class="${d ? 'num' : ''}">${l}</th>`).join('')}<th></th></tr></thead>
+    <div class="seccion">Tabla de ${e.titulo.toLowerCase()}</div><div class="tabla"><table><thead><tr>${e.cols.map(([l, , d]) => `<th class="${d ? 'num' : ''}">${l}</th>`).join('')}<th></th></tr></thead>
     <tbody>${lista.map(r => `<tr>${e.cols.map(([, f, d]) => `<td class="${d ? 'num' : ''}">${f(r)}</td>`).join('')}
       <td class="acc">${puedeEditar() ? `<button class="sec" data-ed="${r.id}">Editar</button>` : ''}
       ${puedeEliminar() ? ` <button class="peligro" data-el="${r.id}">Eliminar</button>` : ''}</td></tr>`).join('')
@@ -559,23 +587,101 @@ function crearDatosIniciales(emp) {
 // =====================================================================
 const VISTAS = {
   inicio() {
-    const emp = buscar('empresas', empresaId());
-    const pasos = [
-      ['Crear la empresa', T.empresas.length], ['Crear un periodo contable', emp && filas('periodos').length],
-      ['Registrar productos', emp && filas('productos').length], ['Registrar materiales y su precio estándar', emp && filas('materiales').length],
-      ['Definir cantidades estándar de materiales', emp && filas('estMP').length], ['Registrar trabajadores y la hora/tarifa estándar', emp && filas('estMOD').length],
-      ['Registrar el CIF presupuestado y el CIF real', emp && filas('cifPres').length && filas('cifReal').length],
-      ['Crear órdenes de producción y la materia prima utilizada', emp && filas('ordenes').length && filas('consumos').length],
-      ['Revisar la hoja de costos y el análisis de variaciones', 0]];
-    $('#vista').innerHTML = `<h2>Bienvenido, ${esc(sesion.nombre.split(' ')[0])}</h2>
-      <p class="desc">${emp ? `Empresa activa: <b>${esc(emp.razon_social)}</b> · NIT ${esc(emp.nit)}` : 'Aún no hay una empresa seleccionada.'}</p>
-      ${emp ? `<div class="cifras">
-        <div class="cifra"><span>Productos</span><b>${filas('productos').length}</b></div>
-        <div class="cifra"><span>Materiales</span><b>${filas('materiales').length}</b></div>
-        <div class="cifra"><span>Trabajadores</span><b>${filas('trabajadores').length}</b></div>
-        <div class="cifra"><span>Órdenes de producción</span><b>${filas('ordenes').length}</b></div></div>` : ''}
-      <h3>Pasos para usar el sistema</h3>
-      <ol class="pasos">${pasos.map(([t, ok]) => `<li class="${ok ? 'hecho' : ''}">${t}</li>`).join('')}</ol>`;
+    const V = $('#vista'), emp = buscar('empresas', empresaId());
+    if (!emp) { V.innerHTML = `<h2>Dashboard</h2>${sinEmpresa()}`; return; }
+    const prods = filas('productos'), pres = filas('cifPres').slice(-1)[0];
+    const per = pres ? buscar('periodos', pres.periodo_id) : filas('periodos')[0];
+    const ords = filas('ordenes').filter(o => !per || o.periodo_id === per.id);
+    const ordIds = new Set(ords.map(o => o.id));
+    const cons = filas('consumos').filter(c => ordIds.has(c.orden_id));
+    const lote = (p) => { const m = /lote de (\d+)/i.exec(p.descripcion || ''); return m ? Number(m[1]) : 1; };
+    const filasCU = prods.map(p => ({ p, c: costoEstandarUnitario(p.id), precio: n(p.precio_venta) }));
+    const mpUsada = cons.reduce((s, c) => s + n(c.cantidad) * n(c.precio), 0);
+    const hMOD = ords.reduce((s, o) => s + n(o.horas_reales), 0), hMaq = ords.reduce((s, o) => s + n(o.horas_maq_reales), 0);
+    const und = ords.reduce((s, o) => s + n(o.cantidad), 0);
+    const cifPres = pres ? n(pres.fijo) + n(pres.variable) : 0;
+    const cifReal = per ? filas('cifReal').filter(c => c.periodo_id === per.id).reduce((s, c) => s + n(c.valor), 0) : 0;
+    const cifAplic = ords.reduce((s, o) => s + calcularOrden(o).std.cif, 0);
+    const dif = cifReal - cifAplic;
+    const margen = (precio, costo) => precio ? (precio - costo) / precio * 100 : 0;
+    const porMat = {};
+    cons.forEach(c => { const k = c.material_id; porMat[k] ||= { cant: 0, costo: 0 }; porMat[k].cant += n(c.cantidad); porMat[k].costo += n(c.cantidad) * n(c.precio); });
+
+    V.innerHTML = `<h2>Dashboard</h2>
+      <p class="desc">Empresa <b>${esc(emp.razon_social)}</b>${per ? ` · Periodo ${esc(per.nombre)}` : ''} · costo unitario, consumos y CIF</p>
+      <div class="filtros"><label>Producto<select id="dProd"><option value="">Todos los productos</option>${prods.map(p => `<option value="${p.id}">${esc(p.codigo)} - ${esc(p.nombre)}</option>`).join('')}</select></label>
+        <label id="dCantL" class="oculto">Cantidad a producir<input id="dCant" type="number" min="1" step="1" value="1"></label></div>
+      <div id="dDet"></div>`;
+
+    const resumen = () => `
+      <div class="cifras">
+        <div class="cifra"><span>Materia prima usada</span><b class="chico">${pesos(mpUsada)}</b><span>${Object.keys(porMat).length} insumos en ${ords.length} órdenes</span></div>
+        <div class="cifra"><span>Horas de mano de obra</span><b class="chico">${num(hMOD)}</b><span>costo ${pesos(ords.reduce((s, o) => s + n(o.horas_reales) * n(o.tarifa_real), 0))}</span></div>
+        <div class="cifra"><span>Horas máquina</span><b class="chico">${num(hMaq)}</b><span>horneadas del periodo</span></div>
+        <div class="cifra"><span>Unidades producidas</span><b class="chico">${num(und)}</b><span>${prods.length} productos</span></div></div>
+      <h3>Costo unitario de cada producto</h3>
+      <div class="tabla"><table><thead><tr><th>Código</th><th>Producto</th><th class="num">Materia prima</th><th class="num">Mano de obra</th><th class="num">CIF</th><th class="num">Costo unitario</th><th class="num">Precio de venta</th><th class="num">Utilidad / und</th><th class="num">Margen</th></tr></thead><tbody>
+        ${filasCU.map(({ p, c, precio }) => { const u = precio - c.total; return `<tr data-p="${p.id}" style="cursor:pointer"><td>${esc(p.codigo)}</td><td>${esc(p.nombre)}</td><td class="num">${pesos(c.mp)}</td><td class="num">${pesos(c.mod)}</td><td class="num">${pesos(c.cif)}</td><td class="num"><b>${pesos(c.total)}</b></td><td class="num">${pesos(precio)}</td><td class="num ${u < 0 ? 'desf' : 'fav'}">${pesos(u)}</td><td class="num ${u < 0 ? 'desf' : 'fav'}">${num(margen(precio, c.total))} %</td></tr>`; }).join('')}
+      </tbody></table></div>
+      <h3>Consumo por unidad de producto</h3>
+      <div class="tabla"><table><thead><tr><th>Producto</th><th class="num">Insumos</th><th class="num">Materia prima</th><th class="num">Horas MOD</th><th class="num">Horas máquina</th><th class="num">CIF aplicado</th></tr></thead><tbody>
+        ${filasCU.map(({ p, c }) => { const m = estandarMOD(p.id); return `<tr><td>${esc(p.nombre)}</td><td class="num">${filas('estMP').filter(e => e.producto_id === p.id).length}</td><td class="num">${pesos(c.mp)}</td><td class="num">${num(m.horas, 4)}</td><td class="num">${num(m.horas_maq, 4)}</td><td class="num">${pesos(c.cif)}</td></tr>`; }).join('')}
+      </tbody></table></div>
+      ${panelCif()}
+      <h3>Materia prima usada en producción${per ? ' · ' + esc(per.nombre) : ''}</h3>
+      <div class="tabla"><table><thead><tr><th>Código</th><th>Materia prima</th><th>Unidad</th><th class="num">Cantidad usada</th><th class="num">Costo real</th></tr></thead><tbody>
+        ${Object.entries(porMat).map(([id, x]) => { const m = buscar('materiales', id); return `<tr><td>${esc(m.codigo)}</td><td>${esc(m.descripcion)}</td><td>${esc(nombre('unidades', m.unidad_id, 'codigo'))}</td><td class="num">${num(x.cant, 4)}</td><td class="num">${pesos(x.costo)}</td></tr>`; }).join('') || '<tr><td colspan="5" class="vacio">Sin órdenes de producción.</td></tr>'}
+        ${Object.keys(porMat).length ? `<tr class="total"><td colspan="4">Total</td><td class="num">${pesos(mpUsada)}</td></tr>` : ''}
+      </tbody></table></div>`;
+
+    function panelCif() {
+      if (!pres) return '<div class="aviso">No hay CIF presupuestado.</div>';
+      const t = tasas(pres), reales = filas('cifReal').filter(c => c.periodo_id === pres.periodo_id);
+      return `<h3>Costos indirectos de fabricación (CIF)</h3>
+        <p class="desc">Base: <b>${esc(pres.base)}</b> · capacidad normal ${num(pres.capacidad)} · tasa predeterminada <b>${pesos(t.total)}</b> (fija ${pesos(t.fija)} + variable ${pesos(t.variable)})</p>
+        <div class="cifras">
+          <div class="cifra"><span>CIF presupuestado</span><b class="chico">${pesos(cifPres)}</b><span>fijo ${pesos(pres.fijo)} · variable ${pesos(pres.variable)}</span></div>
+          <div class="cifra"><span>CIF real</span><b class="chico">${pesos(cifReal)}</b><span>registrado en el periodo</span></div>
+          <div class="cifra"><span>CIF aplicado</span><b class="chico">${pesos(cifAplic)}</b><span>tasa × base estándar</span></div>
+          <div class="cifra"><span>Diferencia</span><b class="chico ${Math.abs(dif) < 0.5 ? 'fav' : claseTipo(dif)}">${pesos(Math.abs(dif))}</b><span>${Math.abs(dif) < 0.5 ? 'CIF aplicado = CIF real' : dif > 0 ? 'Subaplicado (desfavorable)' : 'Sobreaplicado (favorable)'}</span></div></div>
+        <div class="tabla"><table><thead><tr><th>Concepto</th><th>Tipo</th><th class="num">Valor real</th></tr></thead><tbody>
+          ${reales.map(c => `<tr><td>${esc(c.concepto)}</td><td>${esc(c.tipo)}</td><td class="num">${pesos(c.valor)}</td></tr>`).join('')}
+          <tr class="total"><td colspan="2">Total</td><td class="num">${pesos(cifReal)}</td></tr></tbody></table></div>`;
+    }
+
+    const detalle = (p, q) => {
+      const c = costoEstandarUnitario(p.id), m = estandarMOD(p.id), precio = n(p.precio_venta), est = filas('estMP').filter(e => e.producto_id === p.id);
+      return `
+      <div class="cifras">
+        <div class="cifra"><span>Costo unitario</span><b class="chico">${pesos(c.total)}</b><span>MP ${pesos(c.mp)} · MOD ${pesos(c.mod)} · CIF ${pesos(c.cif)}</span></div>
+        <div class="cifra"><span>Precio de venta</span><b class="chico">${pesos(precio)}</b></div>
+        <div class="cifra"><span>Utilidad por unidad</span><b class="chico ${precio - c.total < 0 ? 'desf' : 'fav'}">${pesos(precio - c.total)}</b></div>
+        <div class="cifra"><span>Margen</span><b class="chico ${precio - c.total < 0 ? 'desf' : 'fav'}">${num(margen(precio, c.total))} %</b></div></div>
+      <h3>Total del producto · ${num(q)} unidades</h3>
+      <div class="cifras">
+        <div class="cifra"><span>Materia prima total</span><b class="chico">${pesos(c.mp * q)}</b></div>
+        <div class="cifra"><span>Mano de obra total</span><b class="chico">${pesos(c.mod * q)}</b><span>${num(n(m.horas) * q, 4)} horas</span></div>
+        <div class="cifra"><span>CIF total</span><b class="chico">${pesos(c.cif * q)}</b><span>${num(n(m.horas_maq) * q, 4)} horas máquina</span></div>
+        <div class="cifra"><span>Costo total</span><b class="chico">${pesos(c.total * q)}</b><span>venta ${pesos(precio * q)} · utilidad ${pesos((precio - c.total) * q)}</span></div></div>
+      <h3>Materia prima a usar</h3>
+      <div class="tabla"><table><thead><tr><th>Material</th><th>Unidad</th><th class="num">Cantidad por unidad</th><th class="num">Cantidad total</th><th class="num">Precio estándar</th><th class="num">Costo total</th></tr></thead><tbody>
+        ${est.map(e => { const mt = buscar('materiales', e.material_id); return `<tr><td>${esc(mt.descripcion)}</td><td>${esc(nombre('unidades', mt.unidad_id, 'codigo'))}</td><td class="num">${num(e.cantidad, 4)}</td><td class="num">${num(n(e.cantidad) * q, 4)}</td><td class="num">${pesos(mt.precio_std)}</td><td class="num">${pesos(n(e.cantidad) * q * n(mt.precio_std))}</td></tr>`; }).join('')}
+        <tr class="total"><td colspan="5">Total materia prima</td><td class="num">${pesos(c.mp * q)}</td></tr></tbody></table></div>
+      <h3>Mano de obra</h3>
+      <div class="tabla"><table><thead><tr><th class="num">Horas por unidad</th><th class="num">Horas totales</th><th class="num">Tarifa estándar</th><th class="num">Costo total</th></tr></thead><tbody>
+        <tr><td class="num">${num(m.horas, 4)}</td><td class="num">${num(n(m.horas) * q, 4)}</td><td class="num">${pesos(m.tarifa)}</td><td class="num">${pesos(c.mod * q)}</td></tr></tbody></table></div>
+      ${panelCif()}`;
+    };
+
+    const pintar = () => {
+      const p = buscar('productos', $('#dProd').value);
+      $('#dCantL').classList.toggle('oculto', !p);
+      $('#dDet').innerHTML = p ? detalle(p, Math.max(1, n($('#dCant').value))) : resumen();
+      $('#dDet').querySelectorAll('tr[data-p]').forEach(tr => tr.onclick = () => { $('#dProd').value = tr.dataset.p; $('#dCant').value = lote(buscar('productos', tr.dataset.p)); pintar(); window.scrollTo(0, 0); });
+    };
+    $('#dProd').onchange = () => { const p = buscar('productos', $('#dProd').value); if (p) $('#dCant').value = lote(p); pintar(); };
+    $('#dCant').oninput = pintar;
+    pintar();
   },
 
   hoja() {

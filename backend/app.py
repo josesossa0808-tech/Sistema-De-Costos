@@ -1,296 +1,174 @@
+"""SISTEMA DE COSTOS - Punto de entrada.
+
+Inicia la API REST (Flask) y sirve el frontend (HTML/CSS/JS) en
+http://127.0.0.1:5000 (configurable en config/config.ini). No requiere
+internet: todo se ejecuta en el equipo local; la base de datos es un archivo
+SQLite (database/sistema_costos.db). MySQL es opcional (ver config.ini).
+
+Uso:  python backend/app.py            -> inicia el sistema
+      python backend/app.py --init-bd  -> solo crea la base de datos y sale
 """
-Sistema de Costos Estándar - API (backend)
-Ejecutar:  python app.py   (desde la carpeta backend)
-       o:  SistemaCostos.exe (versión instalable)
-"""
-import configparser
-import getpass
+import logging
 import os
-import secrets
-import shutil
 import sys
 import threading
 import webbrowser
-from functools import wraps
+from logging.handlers import RotatingFileHandler
 
-import mysql.connector
-from mysql.connector import errorcode
-from flask import Flask, jsonify, request, send_from_directory, session
-from werkzeug.security import check_password_hash, generate_password_hash
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-# ---------- Rutas (funciona igual con python app.py o con el .exe) ----------
-if getattr(sys, "frozen", False):
-    # Dentro del .exe: los recursos vienen empacados; la configuración queda junto al .exe
-    RECURSOS = sys._MEIPASS
-    APP_DIR = os.path.dirname(sys.executable)
-else:
-    RECURSOS = APP_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from flask import Flask, jsonify, send_from_directory  # noqa: E402
+from flask.json.provider import DefaultJSONProvider  # noqa: E402
 
-FRONTEND = os.path.join(RECURSOS, "frontend")
-SCHEMA = os.path.join(RECURSOS, "database", "schema.sql")
-CONFIG = os.path.join(APP_DIR, "config", "config.ini")
+import bd  # noqa: E402
+import configuracion as cfg  # noqa: E402
+import recursos  # noqa: E402
+import seguridad  # noqa: E402
+from validaciones import ErrorValidacion  # noqa: E402
 
-if not os.path.exists(CONFIG):
-    # Primera ejecución del .exe: copia la configuración por defecto junto al programa
-    os.makedirs(os.path.dirname(CONFIG), exist_ok=True)
-    shutil.copy(os.path.join(RECURSOS, "config", "config.ini"), CONFIG)
-
-cfg = configparser.ConfigParser()
-cfg.read(CONFIG, encoding="utf-8")
+VERSION = "1.0.0"
 
 
-def guardar_config():
-    with open(CONFIG, "w", encoding="utf-8") as f:
-        cfg.write(f)
+class JSONProveedor(DefaultJSONProvider):
+    ensure_ascii = False
+    sort_keys = False
 
 
-if cfg["server"]["secret_key"] in ("", "cambie-esta-clave-secreta"):
-    cfg["server"]["secret_key"] = secrets.token_hex(24)
-    guardar_config()
-
-app = Flask(__name__, static_folder=FRONTEND, static_url_path="")
-app.secret_key = cfg["server"]["secret_key"]
-
-
-# ---------- Base de datos ----------
-def conectar(con_base=True):
-    d = cfg["database"]
-    return mysql.connector.connect(
-        host=d["host"], port=int(d["port"]), user=d["user"], password=d["password"],
-        database=d["name"] if con_base else None, use_pure=True,
-    )
+def configurar_logs():
+    carpeta = cfg.ruta("sistema", "carpeta_logs", "logs")
+    os.makedirs(carpeta, exist_ok=True)
+    h = RotatingFileHandler(os.path.join(carpeta, "sistema.log"), maxBytes=2_000_000, backupCount=5, encoding="utf-8")
+    h.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s"))
+    raiz = logging.getLogger()
+    raiz.setLevel(logging.INFO)
+    raiz.addHandler(h)
+    raiz.addHandler(logging.StreamHandler())
 
 
-def db():
-    return conectar()
+def crear_app():
+    app = Flask(__name__, static_folder=None)
+    app.json = JSONProveedor(app)
+    app.teardown_appcontext(bd.cerrar)
 
+    from rutas import catalogos, produccion, tablero, usuarios
+    for m in (usuarios, catalogos, produccion, tablero):
+        app.register_blueprint(m.bp)
 
-def preparar_base_de_datos():
-    """Conecta a MySQL (pide la contraseña si hace falta) y crea las tablas si no existen."""
-    while True:
+    @app.get("/api/meta")
+    @seguridad.requiere()
+    def meta():
+        return jsonify(recursos=recursos.publico(), modulos=seguridad.MODULOS, version=VERSION)
+
+    @app.get("/api/salud")
+    def salud():
         try:
-            con = conectar(con_base=False)
-            break
-        except mysql.connector.Error as e:
-            if e.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-                print("\nNo se pudo entrar a MySQL con la contraseña guardada.")
-                cfg["database"]["password"] = getpass.getpass(
-                    f"Escriba la contraseña del usuario '{cfg['database']['user']}' de MySQL: ")
-                continue
-            print("\nERROR: no se pudo conectar a MySQL.")
-            print("Verifique que MySQL Server esté instalado y encendido.")
-            print("Detalle:", e)
-            input("\nPresione Enter para cerrar...")
-            sys.exit(1)
-    guardar_config()
+            bd.valor("SELECT 1 AS v")
+            estado_bd = "ok"
+        except Exception as e:  # pragma: no cover
+            estado_bd = str(e)
+        return jsonify(sistema="ok", base_datos=estado_bd, motor=bd.MOTOR, version=VERSION)
 
-    nombre = cfg["database"]["name"]
-    cur = con.cursor()
-    cur.execute(f"CREATE DATABASE IF NOT EXISTS `{nombre}` "
-                "CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
-    cur.execute(f"USE `{nombre}`")
-    with open(SCHEMA, encoding="utf-8") as f:
-        lineas = [l for l in f if not l.strip().startswith("--")]
-    for sentencia in "".join(lineas).split(";"):
-        s = sentencia.strip()
-        if s and not s.upper().startswith(("CREATE DATABASE", "USE ")):
-            cur.execute(s)
-    con.commit()
-    cur.close()
-    con.close()
+    # ---------------- Errores con mensajes comprensibles
+    @app.errorhandler(ErrorValidacion)
+    def _val(e):
+        return jsonify(error="Revise la información ingresada" if len(e.errores) > 1 or "_" not in e.errores
+                       else e.errores["_"], errores=e.errores), 400
 
+    @app.errorhandler(bd.ErrorIntegridad)
+    def _integ(e):
+        logging.warning("Integridad: %s", e)
+        return jsonify(error="La operación viola la integridad de los datos (registro duplicado o en uso)."), 409
 
-def consulta(sql, params=(), uno=False, escribir=False):
-    con = db()
-    cur = con.cursor(dictionary=True)
-    cur.execute(sql, params)
-    if escribir:
-        con.commit()
-        res = cur.lastrowid
-    else:
-        res = cur.fetchone() if uno else cur.fetchall()
-    cur.close()
-    con.close()
-    return res
+    @app.errorhandler(bd.ErrorBD)
+    def _bd(e):
+        logging.error("BD: %s", e)
+        return jsonify(error=str(e)), 503
 
+    @app.errorhandler(404)
+    def _404(e):
+        return jsonify(error="Recurso no encontrado"), 404
 
-def registrar(accion, detalle=""):
-    consulta("INSERT INTO bitacora (usuario_id, accion, detalle) VALUES (%s,%s,%s)",
-             (session.get("uid"), accion, detalle), escribir=True)
+    @app.errorhandler(Exception)
+    def _gen(e):
+        if hasattr(e, "code") and hasattr(e, "description"):
+            return jsonify(error=e.description), e.code
+        logging.exception("Error no controlado")
+        return jsonify(error="Ocurrió un error inesperado. Detalle registrado en logs/sistema.log"), 500
 
+    # ---------------- Frontend estático
+    @app.get("/")
+    def raiz():
+        return send_from_directory(cfg.DIR_FRONTEND, "index.html")
 
-def crear_admin_inicial():
-    a = cfg["admin_inicial"]
-    if not consulta("SELECT id FROM usuarios WHERE usuario=%s", (a["usuario"],), uno=True):
-        consulta("INSERT INTO usuarios (usuario, password_hash, nombre, rol_id) VALUES (%s,%s,%s,1)",
-                 (a["usuario"], generate_password_hash(a["password"]), "Administrador"), escribir=True)
+    @app.get("/<path:ruta>")
+    def estaticos(ruta):
+        if ruta.startswith("api/"):
+            return jsonify(error="Recurso no encontrado"), 404
+        return send_from_directory(cfg.DIR_FRONTEND, ruta)
+
+    @app.after_request
+    def sin_cache(resp):
+        if resp.mimetype in ("text/html", "application/javascript", "text/javascript", "text/css"):
+            resp.headers["Cache-Control"] = "no-cache"
+        resp.headers["X-Content-Type-Options"] = "nosniff"
+        return resp
+
+    return app
 
 
-# ---------- Seguridad ----------
-def requiere_login(roles=None):
-    def deco(f):
-        @wraps(f)
-        def w(*a, **k):
-            if "uid" not in session:
-                return jsonify(error="Debe iniciar sesión"), 401
-            if roles and session.get("rol") not in roles:
-                return jsonify(error="No tiene permiso para esta acción"), 403
-            return f(*a, **k)
-        return w
-    return deco
+def inicializar_bd():
+    if cfg.booleano("base_datos", "crear_automaticamente", True):
+        bd.crear_esquema()
+    app = crear_app()
+    with app.app_context():
+        seguridad.sembrar_datos_iniciales()
+    return app
 
 
-@app.route("/")
-def inicio():
-    return send_from_directory(FRONTEND, "index.html")
-
-
-@app.post("/api/login")
-def login():
-    d = request.get_json()
-    u = consulta("""SELECT u.*, r.nombre AS rol FROM usuarios u JOIN roles r ON r.id=u.rol_id
-                    WHERE u.usuario=%s AND u.activo=1""", (d.get("usuario"),), uno=True)
-    if not u or not check_password_hash(u["password_hash"], d.get("password", "")):
-        return jsonify(error="Usuario o contraseña incorrectos"), 401
-    session.update(uid=u["id"], nombre=u["nombre"], rol=u["rol"])
-    registrar("Inicio de sesión", u["usuario"])
-    return jsonify(nombre=u["nombre"], rol=u["rol"])
-
-
-@app.post("/api/logout")
-def logout():
-    if "uid" in session:
-        registrar("Cierre de sesión")
-    session.clear()
-    return jsonify(ok=True)
-
-
-@app.get("/api/sesion")
-@requiere_login()
-def sesion():
-    return jsonify(nombre=session["nombre"], rol=session["rol"])
-
-
-# ---------- Usuarios (solo administrador) ----------
-@app.get("/api/usuarios")
-@requiere_login(["Administrador"])
-def usuarios():
-    return jsonify(consulta("""SELECT u.id, u.usuario, u.nombre, r.nombre AS rol, u.activo
-                               FROM usuarios u JOIN roles r ON r.id=u.rol_id ORDER BY u.id"""))
-
-
-@app.post("/api/usuarios")
-@requiere_login(["Administrador"])
-def crear_usuario():
-    d = request.get_json()
-    nid = consulta("INSERT INTO usuarios (usuario, password_hash, nombre, rol_id) VALUES (%s,%s,%s,%s)",
-                   (d["usuario"], generate_password_hash(d["password"]), d["nombre"], d["rol_id"]),
-                   escribir=True)
-    registrar("Crear usuario", d["usuario"])
-    return jsonify(id=nid)
-
-
-@app.get("/api/bitacora")
-@requiere_login(["Administrador"])
-def bitacora():
-    return jsonify(consulta("""SELECT b.fecha, u.usuario, b.accion, b.detalle FROM bitacora b
-                               LEFT JOIN usuarios u ON u.id=b.usuario_id ORDER BY b.id DESC LIMIT 200"""))
-
-
-# ---------- Empresas ----------
-@app.get("/api/empresas")
-@requiere_login()
-def empresas():
-    return jsonify(consulta("SELECT * FROM empresas ORDER BY razon_social"))
-
-
-@app.post("/api/empresas")
-@requiere_login(["Administrador", "Usuario"])
-def crear_empresa():
-    d = request.get_json()
-    nid = consulta("""INSERT INTO empresas (nit, razon_social, regimen_tributario, direccion, telefono)
-                      VALUES (%s,%s,%s,%s,%s)""",
-                   (d["nit"], d["razon_social"], d.get("regimen_tributario"),
-                    d.get("direccion"), d.get("telefono")), escribir=True)
-    registrar("Crear empresa", d["razon_social"])
-    return jsonify(id=nid)
-
-
-@app.put("/api/empresas/<int:eid>")
-@requiere_login(["Administrador", "Usuario"])
-def editar_empresa(eid):
-    d = request.get_json()
-    consulta("""UPDATE empresas SET nit=%s, razon_social=%s, regimen_tributario=%s,
-                direccion=%s, telefono=%s WHERE id=%s""",
-             (d["nit"], d["razon_social"], d.get("regimen_tributario"),
-              d.get("direccion"), d.get("telefono"), eid), escribir=True)
-    registrar("Editar empresa", str(eid))
-    return jsonify(ok=True)
-
-
-@app.delete("/api/empresas/<int:eid>")
-@requiere_login(["Administrador"])
-def eliminar_empresa(eid):
-    consulta("DELETE FROM empresas WHERE id=%s", (eid,), escribir=True)
-    registrar("Eliminar empresa", str(eid))
-    return jsonify(ok=True)
-
-
-# ---------- Análisis de variaciones (fórmulas de costo estándar) ----------
-def tipo(v):
-    return "Favorable" if v < 0 else ("Desfavorable" if v > 0 else "Sin variación")
-
-
-@app.post("/api/variaciones/calcular")
-@requiere_login()
-def calcular_variaciones():
-    """Recibe estándares y reales, devuelve todas las variaciones.
-    Convención: valor positivo = desfavorable, negativo = favorable."""
-    d = request.get_json()
-    f = lambda k: float(d.get(k, 0))
-
-    # Materiales
-    v_precio_mat = (f("precio_real") - f("precio_std")) * f("cantidad_real")
-    v_cant_mat = (f("cantidad_real") - f("cantidad_std_permitida")) * f("precio_std")
-    # Mano de obra
-    v_tarifa = (f("tarifa_real") - f("tarifa_std")) * f("horas_reales")
-    v_eficiencia = (f("horas_reales") - f("horas_std_permitidas")) * f("tarifa_std")
-    # CIF (método de dos variaciones)
-    tasa_var = f("cif_variable_presup") / f("capacidad_normal") if f("capacidad_normal") else 0
-    tasa_fija = f("cif_fijo_presup") / f("capacidad_normal") if f("capacidad_normal") else 0
-    cif_aplicado = (tasa_var + tasa_fija) * f("base_std_permitida")
-    presupuesto_flexible = f("cif_fijo_presup") + tasa_var * f("base_std_permitida")
-    v_presupuesto_cif = f("cif_real") - presupuesto_flexible
-    v_volumen_cif = presupuesto_flexible - cif_aplicado
-
-    items = {
-        "Precio de materiales": v_precio_mat,
-        "Cantidad de materiales": v_cant_mat,
-        "Tarifa de mano de obra": v_tarifa,
-        "Eficiencia de mano de obra": v_eficiencia,
-        "Presupuesto de CIF": v_presupuesto_cif,
-        "Volumen de CIF": v_volumen_cif,
-    }
-    total = sum(items.values())
-    return jsonify(
-        tasa_predeterminada=round(tasa_var + tasa_fija, 4),
-        cif_aplicado=round(cif_aplicado, 2),
-        variaciones=[{"nombre": k, "valor": round(v, 2), "tipo": tipo(v)} for k, v in items.items()],
-        total={"valor": round(total, 2), "tipo": tipo(total)},
-    )
+def main():
+    configurar_logs()
+    log = logging.getLogger("sistema")
+    try:
+        app = inicializar_bd()
+    except bd.ErrorBD as e:
+        log.error(str(e))
+        print("\n*** %s\n" % e)
+        if getattr(sys, "frozen", False):
+            input("Presione Enter para cerrar...")
+        sys.exit(1)
+    if "--init-bd" in sys.argv:
+        print("Base de datos lista (%s)." % bd.MOTOR)
+        return
+    if "--restablecer-admin" in sys.argv:
+        # Recupera el acceso: restablece la contraseña del administrador inicial definida en config.ini
+        with app.app_context():
+            usuario = cfg.obtener("administrador_inicial", "usuario", "admin")
+            n = bd.uno("SELECT id FROM usuarios WHERE usuario=%s", (usuario,))
+            if not n:
+                print("No existe el usuario %s." % usuario)
+                return
+            rol = bd.valor("SELECT id FROM roles WHERE nombre='administrador'")
+            bd.ejecutar("UPDATE usuarios SET password_hash=%s, rol_id=%s, activo=1, intentos_fallidos=0,"
+                        " bloqueado_hasta=NULL WHERE id=%s",
+                        (seguridad.cifrar(cfg.obtener("administrador_inicial", "contrasena", "Admin123*")), rol, n["id"]))
+        print("Contraseña de '%s' restablecida al valor de config.ini." % usuario)
+        return
+    host = cfg.obtener("servidor", "host", "127.0.0.1")
+    puerto = cfg.entero("servidor", "puerto", 5000)
+    url = "http://%s:%d" % ("127.0.0.1" if host in ("0.0.0.0", "") else host, puerto)
+    print("=" * 60)
+    print(" %s v%s" % (cfg.obtener("sistema", "nombre", "Sistema de Costos"), VERSION))
+    print(" Abra en su navegador: %s" % url)
+    print(" Para detener el sistema cierre esta ventana (o Ctrl+C)")
+    print("=" * 60)
+    if cfg.booleano("servidor", "abrir_navegador", True) and "--sin-navegador" not in sys.argv:
+        threading.Timer(1.5, lambda: webbrowser.open(url)).start()
+    try:
+        from waitress import serve
+        serve(app, host=host, port=puerto, threads=8)
+    except ImportError:
+        app.run(host=host, port=puerto, debug=cfg.booleano("servidor", "depuracion", False), use_reloader=False)
 
 
 if __name__ == "__main__":
-    print("=" * 56)
-    print("  SISTEMA DE COSTOS ESTÁNDAR")
-    print("=" * 56)
-    print("Preparando la base de datos...")
-    preparar_base_de_datos()
-    crear_admin_inicial()
-    s = cfg["server"]
-    url = f"http://{s['host']}:{s['port']}"
-    print(f"\nSistema iniciado en: {url}")
-    print(f"Usuario inicial: {cfg['admin_inicial']['usuario']} / {cfg['admin_inicial']['password']}")
-    print("\nNO CIERRE ESTA VENTANA mientras usa el sistema.\n")
-    threading.Timer(1.5, lambda: webbrowser.open(url)).start()
-    app.run(host=s["host"], port=int(s["port"]))
+    main()
